@@ -58,6 +58,17 @@
           fixed-header
           height="240px"
         >
+          <template v-slot:item.precio_unitario_suministro="{ item }">
+            <v-text-field
+              v-model="item.precio_unitario_suministro"
+              outlined
+              dense
+              class="my-text-field"
+              type="number"
+              min="0"
+              :disabled="!suministrosSeleccionados.includes(item)"
+            ></v-text-field>
+          </template>
           <template v-slot:item.cantidad="{ item }">
             <v-text-field
               v-model="item.cantidad"
@@ -68,6 +79,19 @@
               min="0"
               :max="item.saldo_suministro"
               :disabled="!suministrosSeleccionados.includes(item)"
+            ></v-text-field>
+          </template>
+          <template v-slot:item.subtotal="{ item }">
+<!--            <td v-if="item.cantidad" class="align-content-end">
+              {{ item.cantidad * item.precio_unitario_suministro }} Bs
+            </td>
+            <td v-else>
+              0.00
+            </td>-->
+            <v-text-field
+              v-model="item.subtotal"
+              :value="item.cantidad * item.precio_unitario_suministro"
+              disabled
             ></v-text-field>
           </template>
         </v-data-table>

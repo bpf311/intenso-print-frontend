@@ -20,8 +20,20 @@ const seleccionSuministroHeaders = [
     sortable: false
   },
   {
+    text: 'Precio unitario',
+    value: 'precio_unitario_suministro',
+    sortable: false,
+    width: '15%'
+  },
+  {
     text: 'Cantidad',
     value: 'cantidad',
+    sortable: false,
+    width: '15%'
+  },
+  {
+    text: 'Sub total',
+    value: 'subtotal',
     sortable: false
   }
 ]

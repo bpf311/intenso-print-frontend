@@ -38,12 +38,6 @@ const menu = [
         icon: 'mdi-cash-plus',
         to: { name: 'Listado de ingresos' },
         id: 5
-      },
-      {
-        title: 'Egresos',
-        icon: 'mdi-cash-minus',
-        to: { name: 'Listado de egresos' },
-        id: 6
       }
     ]
   },
@@ -51,19 +45,19 @@ const menu = [
     title: 'Gestion de usuarios',
     icon: 'mdi-account-group',
     to: { name: 'Usuarios' },
-    id: 7
+    id: 6
   },
   {
     title: 'Gestion de clientes',
     icon: 'mdi-account-group',
     to: { name: 'Clientes' },
-    id: 8
+    id: 7
   },
   {
     title: 'Gestion de inventario',
     icon: 'mdi-warehouse',
     to: { name: 'Suministros' },
-    id: 9
+    id: 8
   }
   /* {
     title: "Productos",

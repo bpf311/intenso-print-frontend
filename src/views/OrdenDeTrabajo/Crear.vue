@@ -78,53 +78,6 @@
                     color="blue darken-4"
                   />
                 </v-col>
-                <v-col cols="12" md="4">
-                  <v-menu
-                    v-model="seleccionarFecha"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-model="ordenDeTrabajo.fechaEntrega"
-                        label="Fecha de entrega"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        color="blue darken-4"
-                        outlined
-                        clearable
-                        v-on="on"
-                      />
-                    </template>
-                    <v-date-picker
-                      v-model="ordenDeTrabajo.fechaEntrega"
-                      :min="fechaActual"
-                      @input="seleccionarFecha = false"
-                    />
-                  </v-menu>
-                </v-col>
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="ordenDeTrabajo.precioTotal"
-                    label="Precio total"
-                    outlined
-                    prepend-icon="mdi-cash-multiple"
-                    color="blue darken-4"
-                  />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="ordenDeTrabajo.montoCancelado"
-                    label="Monto cancelado"
-                    outlined
-                    prepend-icon="mdi-account-cash"
-                    color="blue darken-4"
-                  />
-                </v-col>
               </v-row>
             </v-col>
           </v-row>
@@ -140,6 +93,39 @@
                 </v-container>
                 <v-col cols="12">
                   <seleccionar-suministros :suministros="suministros" @seleccionados="obtenerSuministrosSeleccionados"/>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" class="pa-4">
+              <v-row>
+                <v-container class="elevation-4 mb-5">
+                  <v-row>
+                    <v-col cols="12">
+                      <h3 class="text-center text--black"> Confirmar precio </h3>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="ordenDeTrabajo.precioTotal"
+                    label="Precio total"
+                    outlined
+                    prepend-icon="mdi-cash-multiple"
+                    color="blue darken-4"
+                    suffix="Bs"
+                  />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="ordenDeTrabajo.montoCancelado"
+                    label="Monto cancelado"
+                    outlined
+                    prepend-icon="mdi-account-cash"
+                    color="blue darken-4"
+                    suffix="Bs"
+                  />
                 </v-col>
               </v-row>
             </v-col>
@@ -223,6 +209,11 @@ export default {
     ],
     tipoDeClienteSeleccionado: null
   }),
+  watch: {
+    suministros (nuevosDatos) {
+      console.log(nuevosDatos)
+    }
+  },
   methods: {
     obtenerSuministrosSeleccionados (e) {
       this.suministros = e
