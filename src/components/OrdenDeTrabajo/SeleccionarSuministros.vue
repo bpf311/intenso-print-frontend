@@ -57,6 +57,8 @@
           show-select
           fixed-header
           height="240px"
+          @item-selected="seleccionDeSuministros($event)"
+          @input="enviarDatos($event)"
         >
           <template v-slot:item.precio_unitario_suministro="{ item }">
             <v-text-field
@@ -67,6 +69,7 @@
               type="number"
               min="0"
               :disabled="!suministrosSeleccionados.includes(item)"
+              @input="calcularSubtotal(item)"
             ></v-text-field>
           </template>
           <template v-slot:item.cantidad="{ item }">
@@ -79,20 +82,16 @@
               min="0"
               :max="item.saldo_suministro"
               :disabled="!suministrosSeleccionados.includes(item)"
+              @input="calcularSubtotal(item)"
             ></v-text-field>
           </template>
           <template v-slot:item.subtotal="{ item }">
-<!--            <td v-if="item.cantidad" class="align-content-end">
+            <td v-if="item.cantidad">
               {{ item.cantidad * item.precio_unitario_suministro }} Bs
             </td>
             <td v-else>
-              0.00
-            </td>-->
-            <v-text-field
-              v-model="item.subtotal"
-              :value="item.cantidad * item.precio_unitario_suministro"
-              disabled
-            ></v-text-field>
+
+            </td>
           </template>
         </v-data-table>
       </v-col>
@@ -120,9 +119,10 @@ export default {
     return {
       busqueda: null,
       headers: seleccionSuministroHeaders,
-      items: [],
+      items: null,
+      itemsAux: null,
       loading: true,
-      seleccionTipoSuministro: '',
+      seleccionTipoSuministro: null,
       tiposDeSuministros: [],
       loadingSelect: true,
       seleccionStock: 'todos',
@@ -134,15 +134,30 @@ export default {
       suministrosSeleccionados: this.suministros
     }
   },
-  watch: {
-    suministrosSeleccionados (nuevoValor) {
-      this.$emit('seleccionados', nuevoValor)
-    }
-  },
   created () {
     this.obtenerTiposDeSuministros()
   },
   methods: {
+    enviarDatos (datos) {
+      if (datos.every(obj => Object.prototype.hasOwnProperty.call(obj, 'subtotal') && obj.subtotal !== null)) {
+        this.$emit('seleccionados', datos)
+      }
+    },
+    calcularSubtotal (item) {
+      if (item.cantidad) {
+        item.subtotal = item.cantidad * item.precio_unitario_suministro
+        this.$emit('seleccionados', this.suministrosSeleccionados)
+      }
+    },
+    seleccionDeSuministros (e) {
+      if (e.value === false) {
+        const valorAnterior = this.itemsAux[this.itemsAux.findIndex(x => x.id_suministro === e.item.id_suministro)]
+        e.item.cantidad = null
+        e.item.subtotal = null
+        e.item.precio_unitario_suministro = valorAnterior.precio_unitario_suministro
+        this.$emit('seleccionados', this.suministrosSeleccionados)
+      }
+    },
     obtenerTiposDeSuministros () {
       this.$api({
         method: 'get',
@@ -162,7 +177,9 @@ export default {
           '/' + this.seleccionStock,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        this.items = response.data.suministros
+        const temp = response.data.suministros
+        this.items = temp
+        this.itemsAux = JSON.parse(JSON.stringify(temp))
         this.loading = false
       })
     },

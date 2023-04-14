@@ -101,11 +101,60 @@
                 </v-btn>
               </template>
               <span>Editar datos</span>
+            </v-tooltip><v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="red"
+                  class="rounded-l-0"
+                  small
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="ventanaConfirmacion = true"
+                >
+                  <v-icon>mdi-cube-send</v-icon>
+                </v-btn>
+              </template>
+              <span>Finalizar OT</span>
             </v-tooltip>
           </div>
         </template>
       </v-data-table>
     </v-card-text>
+    <v-dialog
+      v-model="ventanaConfirmacion"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          Confirmar acción
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text class="mt-5">
+          <p class="text-justify">
+            Si finaliza la Orden de Trabajo no podra realizar modificaciones posteriores y se descontara del inventario los suministros asignados a esta OT,
+            sin embargo aun podra registrar pagos si es que existiera un saldo adicional.
+          </p>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="error"
+            @click="ventanaConfirmacion = false"
+          >
+            Cancelar
+          </v-btn>
+          <v-btn
+            color="green"
+            class="white--text"
+            @click="ventanaConfirmacion = false"
+          >
+            Confirmar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-snackbar
       v-model="alerta"
       :timeout="4000"
@@ -137,6 +186,7 @@ import ordenDeTrabajoHeaders from '@/commons/tableHeaders/ordenDeTrabajo'
 export default {
   name: 'ListadoDeOrdenesDeTrabajo',
   data: () => ({
+    ventanaConfirmacion: false,
     headers: ordenDeTrabajoHeaders,
     busqueda: null,
     items: [],

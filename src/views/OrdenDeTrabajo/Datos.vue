@@ -22,7 +22,7 @@
                 </v-row>
               </v-container>
             </v-card-title>
-            <v-card-text v-if="ordenDeTrabajo.cliente.id_tipo_de_cliente === 1">
+            <v-card-text v-if="ordenDeTrabajo.orden.cliente.id_tipo_de_cliente === 1">
               <v-row
                 v-if="!overlay"
                 justify="center"
@@ -38,7 +38,7 @@
                 </v-col>
               </v-row>
             </v-card-text>
-            <v-card-text v-if="ordenDeTrabajo.cliente.id_tipo_de_cliente === 2">
+            <v-card-text v-if="ordenDeTrabajo.orden.cliente.id_tipo_de_cliente === 2">
               <v-row
                 v-if="!overlay"
                 justify="center"

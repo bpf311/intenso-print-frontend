@@ -170,14 +170,11 @@
 </template>
 
 <script>
-import moment from 'moment'
 import SeleccionarSuministros from '@/components/OrdenDeTrabajo/SeleccionarSuministros.vue'
 export default {
   name: 'CrearOrdenDeTrabajo',
   components: { SeleccionarSuministros },
   data: () => ({
-    fechaActual: moment().format('YYYY-MM-DD'),
-    seleccionarFecha: false,
     loading: false,
     inactivo: true,
     botonCargando: false,
@@ -185,19 +182,8 @@ export default {
     alerta: false,
     clientes: [],
     errores: [],
-    usuario: {
-      rol: null,
-      nombre: null,
-      apellidoPaterno: null,
-      apellidoMaterno: null,
-      celular: null,
-      correo: null,
-      carnet: null,
-      codigo: null
-    },
     clienteSeleccionado: null,
     ordenDeTrabajo: {
-      fechaEntrega: null,
       descripcion: null,
       precioTotal: null,
       montoCancelado: null
@@ -209,14 +195,18 @@ export default {
     ],
     tipoDeClienteSeleccionado: null
   }),
-  watch: {
-    suministros (nuevosDatos) {
-      console.log(nuevosDatos)
-    }
-  },
   methods: {
     obtenerSuministrosSeleccionados (e) {
+      let total = 0
       this.suministros = e
+      this.suministros.forEach((elemento) => {
+        total = total + elemento.subtotal
+      })
+      if (total > 0) {
+        this.ordenDeTrabajo.precioTotal = total.toFixed(2)
+      } else {
+        this.ordenDeTrabajo.precioTotal = null
+      }
     },
     obtenerClientes () {
       this.clienteSeleccionado = null
@@ -252,7 +242,7 @@ export default {
           this.$store.commit('recargarDatos')
           this.clienteSeleccionado = null
           this.suministros = []
-          this.reiniciarDatos(this.suministros)
+          this.reiniciarDatos(this.ordenDeTrabajo)
           this.alerta = true
         })
     },
@@ -260,7 +250,6 @@ export default {
       const datos = {
         id_cliente: this.clienteSeleccionado,
         id_tipo_de_orden: 1,
-        fecha_entrega: this.ordenDeTrabajo.fechaEntrega,
         precio_total: this.ordenDeTrabajo.precioTotal,
         monto_cancelado: this.ordenDeTrabajo.montoCancelado,
         descripcion_orden_de_trabajo: this.ordenDeTrabajo.descripcion

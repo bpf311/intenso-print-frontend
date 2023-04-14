@@ -1,5 +1,15 @@
 <template>
   <v-card>
+    <v-row class="mt-2">
+      <v-spacer></v-spacer>
+      <v-col cols="5">
+        <div class="elevation-4 me-4">
+          <v-card-subtitle>
+            <h3 class="black--text text-center">Deuda total: {{ deudaTotal }} Bs</h3>
+          </v-card-subtitle>
+        </div>
+      </v-col>
+    </v-row>
     <v-card-text>
       <v-data-table
         :headers="headers"
@@ -84,7 +94,8 @@ export default {
     alerta: false,
     loading: true,
     ingreso: null,
-    ordenesDeTrabajo: []
+    ordenesDeTrabajo: [],
+    deudaTotal: null
   }),
   created () {
     this.obtenerOrdenesDeCliente()
@@ -97,13 +108,14 @@ export default {
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.ordenesDeTrabajo = response.data.ordenesDelCliente
+        this.deudaTotal = response.data.deudaTotal
         this.loading = false
         this.overlay = false
       })
     },
     colorDeFondo (estado) {
       if (estado === 'Pago completo') return 'green'
-      else if (estado === 'Faltan pagos') return 'red'
+      else if (estado === 'Faltan pagos') return 'red accent-4'
     },
     abrirVentanaModal (datos) {
       this.ingreso = datos
