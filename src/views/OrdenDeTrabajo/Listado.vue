@@ -131,7 +131,7 @@
         </v-card-title>
         <v-divider></v-divider>
         <v-card-text class="mt-5">
-          <p class="text-justify">
+          <p class="text-justify text--black">
             Si finaliza la Orden de Trabajo no podra realizar modificaciones posteriores y se descontara del inventario los suministros asignados a esta OT,
             sin embargo aun podra registrar pagos si es que existiera un saldo adicional.
           </p>

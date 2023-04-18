@@ -65,6 +65,15 @@
               />
             </v-col>
             <v-col cols="12" md="6">
+              <v-text-field
+                v-model="suministro.precioUnitario"
+                label="Precio unitario de venta"
+                outlined
+                prepend-icon="mdi-cash-multiple"
+                color="blue darken-4"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
               <v-select
                 v-model="caracteristicasSeleccionadas"
                 label="Caracteristicas a registrar"
@@ -181,7 +190,8 @@ export default {
     suministro: {
       tipoSuministro: {},
       unidadMedida: null,
-      descripcion: null
+      descripcion: null,
+      precioUnitario: null
     },
     caracteristicasSeleccionadas: []
   }),
@@ -252,6 +262,7 @@ export default {
         id_tipo_de_suministro: this.suministro.tipoSuministro.id_tipo_de_suministro,
         descripcion_suministro: this.suministro.descripcion,
         codigo_tipo_suministro: this.suministro.tipoSuministro.codigo_tipo_suministro,
+        precio_unitario_suministro: this.suministro.precioUnitario,
         caracteristicas: this.caracteristicasSeleccionadas.map(
           (elemento) => elemento.id_caracteristica
         ),

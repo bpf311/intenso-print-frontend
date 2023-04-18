@@ -51,6 +51,15 @@
                         color="blue darken-4"
                       />
                     </v-col>
+                    <v-col class="mt-5" cols="10">
+                      <v-text-field
+                        v-model="suministro.precio_unitario_suministro"
+                        label="Precio unitario de venta"
+                        outlined
+                        prepend-icon="mdi-cash-multiple"
+                        color="blue darken-4"
+                      />
+                    </v-col>
                     <v-col cols="10">
                       <v-select
                         v-model="suministro.id_unidad_de_medida"
@@ -272,6 +281,7 @@ export default {
       return {
         id_unidad_de_medida: this.suministro.id_unidad_de_medida,
         descripcion_suministro: this.suministro.descripcion_suministro,
+        precio_unitario_suministro: this.suministro.precio_unitario_suministro,
         caracteristicas: this.caracteristicasRegistradas.map(
           (elemento) => elemento.id || elemento.id_caracteristica
         ),
