@@ -67,8 +67,27 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="info"
+                  color="green"
                   class="rounded-r-0"
+                  small
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                  :to="{
+                    name: 'Datos de orden de trabajo',
+                    params: { id: row.item['id_orden_de_trabajo'] },
+                  }"
+                >
+                  <v-icon>mdi-cash-register</v-icon>
+                </v-btn>
+              </template>
+              <span>Registrar pago</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="info"
+                  class="rounded-0"
                   small
                   dark
                   v-bind="attrs"
@@ -83,7 +102,7 @@
               </template>
               <span>Ver datos</span>
             </v-tooltip>
-            <v-tooltip bottom>
+            <v-tooltip v-if="row.item['estado_orden_de_trabajo'] === 0" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="secondary"
@@ -101,7 +120,8 @@
                 </v-btn>
               </template>
               <span>Editar datos</span>
-            </v-tooltip><v-tooltip bottom>
+            </v-tooltip>
+            <v-tooltip v-if="row.item['estado_orden_de_trabajo'] === 0" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="red"
@@ -110,7 +130,7 @@
                   dark
                   v-bind="attrs"
                   v-on="on"
-                  @click="ventanaConfirmacion = true"
+                  @click="abrirVentanaConfirmacion(row.item['id_orden_de_trabajo'])"
                 >
                   <v-icon>mdi-cube-send</v-icon>
                 </v-btn>
@@ -141,14 +161,15 @@
           <v-spacer></v-spacer>
           <v-btn
             color="error"
-            @click="ventanaConfirmacion = false"
+            @click="cerrarVentanaConfirmacion"
           >
             Cancelar
           </v-btn>
           <v-btn
             color="green"
             class="white--text"
-            @click="ventanaConfirmacion = false"
+            :loading="botonCargando"
+            @click="finalizarOrdenDeTrabajo"
           >
             Confirmar
           </v-btn>
@@ -190,6 +211,7 @@ export default {
     headers: ordenDeTrabajoHeaders,
     busqueda: null,
     items: [],
+    botonCargando: false,
     respuestaServidor: null,
     alerta: false,
     loading: true,
@@ -199,7 +221,8 @@ export default {
     estados: [
       { id: 1, estado: 'Finalizados' },
       { id: 0, estado: 'Pendientes' }
-    ]
+    ],
+    idSuministro: null
   }),
   activated () {
     if (
@@ -214,6 +237,14 @@ export default {
     this.obtenerOrdenesDeTrabajo()
   },
   methods: {
+    abrirVentanaConfirmacion (id) {
+      this.ventanaConfirmacion = true
+      this.idSuministro = id
+    },
+    cerrarVentanaConfirmacion () {
+      this.ventanaConfirmacion = false
+      this.idSuministro = null
+    },
     obtenerOrdenesDeTrabajo () {
       this.$api({
         method: 'get',
@@ -223,6 +254,21 @@ export default {
         const { ordenesDeTrabajo } = response.data
         this.items = ordenesDeTrabajo
         this.loading = false
+      })
+    },
+    finalizarOrdenDeTrabajo () {
+      this.botonCargando = true
+      this.$api({
+        method: 'put',
+        url: 'ordenes-de-trabajo/finalizar-orden-de-trabajo/' + this.idSuministro,
+        headers: { Authorization: 'Bearer ' + localStorage.token }
+      }).then((response) => {
+        this.respuestaServidor = response.data.mensaje
+      }).finally(() => {
+        this.botonCargando = false
+        this.cerrarVentanaConfirmacion()
+        this.alerta = true
+        this.recargarTabla()
       })
     },
     recargarTabla () {

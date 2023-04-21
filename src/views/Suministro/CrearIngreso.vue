@@ -31,13 +31,35 @@
           <v-row>
             <v-col cols="12" md="6">
               <v-select
+                v-model="ingreso.tipoDocumento"
+                label="Tipo de documento"
+                outlined
+                prepend-icon="mdi-office-building"
+                :items="tiposDeDocumentos"
+                item-text="tipo_de_documento"
+                item-value="id_tipo_de_documento"
+                color="blue darken-4"
+                :loading="loadingSelect"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="ingreso.numeroDocumento"
+                label="Numero del documento"
+                outlined
+                prepend-icon="mdi-package-variant-closed-plus"
+                color="blue darken-4"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
                 v-model="ingreso.proveedor"
                 label="Proveedor"
                 outlined
                 prepend-icon="mdi-office-building"
                 :items="proveedores"
                 item-text="razon_social_proveedor"
-                return-object
+                item-value="id_proveedor"
                 color="blue darken-4"
                 :loading="loadingSelect"
               />
@@ -111,22 +133,19 @@ export default {
     botonCargando: false,
     loadingSelect: true,
     proveedores: [],
+    tiposDeDocumentos: [],
     errores: [],
     ingreso: {
       suministro: null,
-      proveedor: {},
-      concepto: null,
-      nombreRazonSocial: null,
-      nit: null,
-      cantidad: null,
-      importe: null,
-      factura: null,
-      numeroFactura: null,
-      detalle: null
+      proveedor: null,
+      tipoDocumento: null,
+      numeroDocumento: null,
+      cantidad: null
     }
   }),
   created () {
     this.obtenerProveedores()
+    this.obtenerTiposDeDocumentos()
   },
   methods: {
     suministro () {
@@ -139,6 +158,16 @@ export default {
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.proveedores = response.data.proveedores
+        this.loadingSelect = false
+      })
+    },
+    obtenerTiposDeDocumentos () {
+      this.$api({
+        method: 'get',
+        url: 'tipos-de-documentos/obtener-tipos-de-documentos',
+        headers: { Authorization: 'Bearer ' + localStorage.token }
+      }).then((response) => {
+        this.tiposDeDocumentos = response.data.tiposDeDocumentos
         this.loadingSelect = false
       })
     },
@@ -167,7 +196,9 @@ export default {
     generarDatos () {
       return {
         id_suministro: this.$route.params.id,
-        id_proveedor: this.ingreso.proveedor.id_proveedor,
+        id_proveedor: this.ingreso.proveedor,
+        id_tipo_de_documento: this.ingreso.tipoDocumento,
+        numero_documento: this.ingreso.numeroDocumento,
         cantidad_ingreso: this.ingreso.cantidad
       }
     },
