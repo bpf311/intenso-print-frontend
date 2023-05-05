@@ -4,20 +4,24 @@ const ordenDeTrabajoHeaders = [
     value: 'codigo_orden_de_trabajo'
   },
   {
-    text: 'Cliente',
-    value: 'datos_cliente'
+    text: 'Fecha y hora de registro',
+    value: 'fecha_registro'
   },
   {
-    text: 'Descripcion de la orden de trabajo',
-    value: 'descripcion_orden_de_trabajo'
+    text: 'Cliente',
+    value: 'datos_cliente'
   },
   {
     text: 'Precio total',
     value: 'precio_total'
   },
   {
-    text: 'Fecha de entrega',
-    value: 'fecha_entrega'
+    text: 'Monto pagado',
+    value: 'monto_cancelado_actual'
+  },
+  {
+    text: 'Saldo',
+    value: 'saldo_restante'
   },
   {
     text: 'Opciones',

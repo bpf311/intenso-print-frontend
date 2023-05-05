@@ -14,8 +14,8 @@ const menu = [
         icon: 'mdi-view-dashboard',
         to: { name: 'Ordenes de trabajo' },
         id: 2
-      },
-      {
+      }
+      /* {
         title: 'Ordenes de servicio',
         icon: 'mdi-view-dashboard',
         to: { name: 'Listado de ordenes de servicios' },
@@ -26,7 +26,7 @@ const menu = [
         icon: 'mdi-view-dashboard',
         to: { name: 'Listado de ordenes de ventas' },
         id: 4
-      }
+      } */
     ]
   },
   {
@@ -49,7 +49,7 @@ const menu = [
   },
   {
     title: 'Gestion de clientes',
-    icon: 'mdi-account-group',
+    icon: 'mdi-briefcase-account',
     to: { name: 'Clientes' },
     id: 7
   },
@@ -58,6 +58,24 @@ const menu = [
     icon: 'mdi-warehouse',
     to: { name: 'Suministros' },
     id: 8
+  },
+  {
+    title: 'Gestion de roles y permisos',
+    icon: 'mdi-shield-account',
+    to: { name: 'Roles' },
+    id: 9
+  },
+  {
+    title: 'Reportes',
+    icon: 'mdi-finance',
+    to: { name: 'Listado de clientes' },
+    id: 10
+  },
+  {
+    title: 'Gestion de proveedores',
+    icon: 'mdi-store',
+    to: { name: 'Suministros' },
+    id: 11
   }
   /* {
     title: "Productos",

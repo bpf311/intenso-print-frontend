@@ -47,8 +47,8 @@
                     outlined
                     prepend-icon="mdi-briefcase-account"
                     :items="tiposDeCliente"
-                    item-text="text"
-                    item-value="id"
+                    item-text="tipo_cliente"
+                    item-value="id_tipo_de_cliente"
                     color="blue darken-4"
                     @change="obtenerClientes()"
                   />
@@ -92,7 +92,45 @@
                   </v-row>
                 </v-container>
                 <v-col cols="12">
-                  <seleccionar-suministros :suministros="suministros" @seleccionados="obtenerSuministrosSeleccionados"/>
+                  <v-simple-table class="elevation-4" style="width:100%">
+                    <thead>
+                      <tr>
+                        <th>Suministro</th>
+                        <th>Stock</th>
+                        <th style="width:20%">Precio unitario</th>
+                        <th style="width:20%">Cantidad</th>
+                        <th style="width:20%">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in items" :key="item.id_suministro">
+                        <td>{{ item.descripcion_suministro }}</td>
+                        <td>{{ item.saldo_suministro }}</td>
+                        <td>
+                          <v-text-field
+                            v-model="item.precio_unitario_suministro"
+                            outlined
+                            dense
+                            class="my-text-field"
+                            color="blue darken-4"
+                            suffix="Bs"
+                            @input="calcularSubtotal(item)"
+                          />
+                        </td>
+                        <td>
+                          <v-text-field
+                            v-model="item.cantidad"
+                            outlined
+                            dense
+                            class="my-text-field"
+                            color="blue darken-4"
+                            @input="calcularSubtotal(item)"
+                          />
+                        </td>
+                        <td align="end"><p v-if="item.cantidad">{{ (item.precio_unitario_suministro * item.cantidad).toFixed(2) }} Bs</p></td>
+                      </tr>
+                    </tbody>
+                  </v-simple-table>
                 </v-col>
               </v-row>
             </v-col>
@@ -168,12 +206,14 @@
     </v-snackbar>
   </v-card>
 </template>
-
+<style>
+  .my-text-field .v-text-field__details {
+    display: none;
+  }
+</style>
 <script>
-import SeleccionarSuministros from '@/components/OrdenDeTrabajo/SeleccionarSuministros.vue'
 export default {
   name: 'CrearOrdenDeTrabajo',
-  components: { SeleccionarSuministros },
   data: () => ({
     loading: false,
     inactivo: true,
@@ -189,32 +229,68 @@ export default {
       montoCancelado: null
     },
     suministros: [],
-    tiposDeCliente: [
-      { id: 'empresariales', text: 'Empresarial' },
-      { id: 'personales', text: 'Personal' }
-    ],
-    tipoDeClienteSeleccionado: null
+    tiposDeCliente: [],
+    tipoDeClienteSeleccionado: null,
+    items: [],
+    subtotales: {}
   }),
+  created () {
+    this.obtenerTiposDeCliente()
+    this.obtenerSuministros()
+  },
   methods: {
-    obtenerSuministrosSeleccionados (e) {
-      let total = 0
-      this.suministros = e
-      this.suministros.forEach((elemento) => {
-        total = total + elemento.subtotal
-      })
+    calcularSubtotal (item) {
+      const id = item.id_suministro
+      if (item.cantidad) {
+        item.subtotal = item.cantidad * item.precio_unitario_suministro
+        this.subtotales[id] = item.subtotal
+      } else {
+        delete this.subtotales[id]
+        delete item.cantidad
+        delete item.subtotal
+      }
+      this.calcularTotal()
+    },
+    calcularTotal () {
+      const total = Object.values(this.subtotales).reduce((a, b) => a + b, 0)
       if (total > 0) {
         this.ordenDeTrabajo.precioTotal = total.toFixed(2)
       } else {
         this.ordenDeTrabajo.precioTotal = null
       }
     },
+    obtenerSuministros () {
+      this.$api({
+        method: 'get',
+        url:
+          'suministros/obtener-suministros/1/todos',
+        /* 'suministros/obtener-suministros/' +
+          this.seleccionTipoSuministro +
+          '/' + this.seleccionStock, */
+        headers: { Authorization: 'Bearer ' + localStorage.token }
+      }).then((response) => {
+        this.items = response.data.suministros
+        this.loading = false
+      })
+    },
+    obtenerTiposDeCliente () {
+      this.$api({
+        method: 'get',
+        url: 'clientes/obtener-tipos-cliente',
+        headers: { Authorization: 'Bearer ' + localStorage.token }
+      }).then((response) => {
+        this.tiposDeCliente = response.data.tiposDeCliente
+        this.loadingSelect = false
+      })
+    },
     obtenerClientes () {
       this.clienteSeleccionado = null
       this.loading = true
       this.inactivo = true
+      const tipoCliente = this.tipoDeClienteSeleccionado === 1 ? 'empresariales' : 'personales'
       this.$api({
         method: 'get',
-        url: 'clientes/obtener-clientes-' + this.tipoDeClienteSeleccionado,
+        url: 'clientes/obtener-clientes-' + tipoCliente,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.clientes = response.data.clientes
@@ -247,6 +323,9 @@ export default {
         })
     },
     generarDatos () {
+      const cantidades = []
+      const preciosUnitarios = []
+      const suministros = []
       const datos = {
         id_cliente: this.clienteSeleccionado,
         id_tipo_de_orden: 1,
@@ -254,10 +333,17 @@ export default {
         monto_cancelado: this.ordenDeTrabajo.montoCancelado,
         descripcion_orden_de_trabajo: this.ordenDeTrabajo.descripcion
       }
-      if (this.suministros.length > 0) {
-        datos.suministros = this.suministros.map(suministro => suministro.id_suministro)
-        datos.cantidades = this.suministros.map(suministro => suministro.cantidad)
-      }
+      this.items.forEach(function (item) {
+        if (item.cantidad && item.cantidad > 0) {
+          suministros.push(item.id_suministro)
+          cantidades.push(item.cantidad)
+          preciosUnitarios.push(item.precio_unitario_suministro)
+        }
+      })
+
+      datos.suministros = suministros
+      datos.precios = preciosUnitarios
+      datos.cantidades = cantidades
       return datos
     },
     reiniciarDatos (obj) {

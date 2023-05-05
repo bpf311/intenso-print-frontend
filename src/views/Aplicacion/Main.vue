@@ -108,11 +108,19 @@ import sesion from '../../services/sesion'
 export default {
   data () {
     return {
-      usuario: this.$store.getters.nombreCompleto,
-      rolUsuario: this.$store.getters.rolActual,
-      codigoUsuario: this.$store.getters.codigoUsuario,
       menu: true,
       itemsMenu: sesion.obtenerMenu()
+    }
+  },
+  computed: {
+    usuario () {
+      return this.$store.getters.nombreCompleto
+    },
+    rolUsuario () {
+      return this.$store.getters.rolActual
+    },
+    codigoUsuario () {
+      return this.$store.getters.codigoUsuario
     }
   },
   methods: {

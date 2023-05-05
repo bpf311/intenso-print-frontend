@@ -1,15 +1,32 @@
 <template>
-  <v-card>
-    <v-row class="mt-2">
-      <v-spacer></v-spacer>
-      <v-col cols="5">
-        <div class="elevation-4 me-4">
-          <v-card-subtitle>
-            <h3 class="black--text text-center">Deuda total: {{ deudaTotal }} Bs</h3>
-          </v-card-subtitle>
-        </div>
-      </v-col>
-    </v-row>
+  <v-card elevation="5" class="rounded-lg">
+    <v-card-subtitle>
+      <v-container class="elevation-4">
+        <v-row class="mt-2">
+          <v-col>
+            <v-select
+              v-model="seleccionDeuda"
+              outlined
+              :items="deuda"
+              item-text="estado"
+              label="Estado de pagos"
+              item-value="id"
+              hint="Seleccione el estado de pagos"
+              persistent-hint
+              @change="recargarTabla()"
+            />
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="5">
+            <div class="elevation-4 me-4">
+              <v-card-subtitle>
+                <h3 class="black--text text-center">Deuda total: {{ deudaTotal }} Bs</h3>
+              </v-card-subtitle>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-subtitle>
     <v-card-text>
       <v-data-table
         :headers="headers"
@@ -46,40 +63,103 @@
               </template>
               <span>Ver datos</span>
             </v-tooltip>
-            <v-tooltip bottom>
+            <v-tooltip bottom v-if="row.item['estado'] === 'Faltan pagos'">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="secondary"
+                  color="green"
                   class="rounded-l-0"
                   small
                   dark
                   v-bind="attrs"
                   v-on="on"
+                  @click="abrirVentanaPago(row.item['id_orden'], row.item['saldo_restante'])"
                 >
-                  <v-icon>mdi-pencil</v-icon>
+                  <v-icon>mdi-cash-register</v-icon>
                 </v-btn>
               </template>
-              <span>Editar datos</span>
+              <span>Registrar pago</span>
             </v-tooltip>
           </div>
         </template>
       </v-data-table>
     </v-card-text>
-<!--    <v-dialog v-model="ventanaModal" width="500" scrollable>
+    <v-dialog
+      v-model="ventanaPago"
+      width="500"
+    >
       <v-card>
         <v-card-title class="text-h5 grey lighten-2">
-          Detalles del ingreso
+          Registrar pago
         </v-card-title>
-        <datos v-if="ingreso" :ingreso="ingreso" />
-        <v-divider />
+        <v-divider></v-divider>
+        <v-card-text class="mt-5">
+          <v-form>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <div class="elevation-4 mx-auto mb-5">
+                    <v-card-subtitle>
+                      <h3 class="black--text text-center">Saldo: {{ saldoRestante }} Bs</h3>
+                    </v-card-subtitle>
+                  </div>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="montoPagado"
+                    label="Monto cancelado"
+                    outlined
+                    prepend-icon="mdi-account-cash"
+                    color="blue darken-4"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+        <v-divider></v-divider>
         <v-card-actions>
-          <v-spacer />
-          <v-btn color="red" class="white&#45;&#45;text" @click="cerrarVentanModal()">
-            Cerrar
+          <v-spacer></v-spacer>
+          <v-btn
+            color="error"
+            @click="cerrarVentanaPago"
+          >
+            Cancelar
+          </v-btn>
+          <v-btn
+            color="green"
+            class="white--text"
+            :loading="botonCargando"
+            @click="registrarPagoOrdenDeTrabajo"
+          >
+            Registrar
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>-->
+    </v-dialog>
+    <v-snackbar
+      v-model="alerta"
+      :timeout="4000"
+      color="success"
+      app
+      top
+      right
+    >
+      <v-row align="center" justify="center">
+        <v-col cols="2">
+          <v-icon
+            large
+            color="white"
+          >
+            mdi-check-circle-outline
+          </v-icon>
+        </v-col>
+        <v-col cols="10" align-self="center">
+          <p class="text-center font-weight-black my-auto">
+            {{ respuestaServidor }}
+          </p>
+        </v-col>
+      </v-row>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -90,21 +170,72 @@ export default {
   data: () => ({
     headers: ordenesDeTrabajoClienteHeaders,
     ventanaModal: false,
+    ventanaPago: false,
     mensaje: '',
     alerta: false,
     loading: true,
     ingreso: null,
     ordenesDeTrabajo: [],
-    deudaTotal: null
+    deudaTotal: null,
+    montoPagado: null,
+    idOrden: null,
+    botonCargando: false,
+    saldoRestante: null,
+    respuestaServidor: null,
+    seleccionDeuda: '0',
+    deuda: [
+      { id: '0', estado: 'Faltan pagos' },
+      { id: '1', estado: 'Pagos completos' }
+    ]
   }),
   created () {
     this.obtenerOrdenesDeCliente()
   },
   methods: {
+    registrarPagoOrdenDeTrabajo () {
+      const pagoCompleto = parseFloat(this.saldoRestante).toFixed(2) === parseFloat(this.montoPagado).toFixed(2) ? 1 : 0
+      console.log(pagoCompleto)
+      this.botonCargando = true
+      this.$api({
+        method: 'post',
+        url: 'ordenes/registrar-pago-orden',
+        headers: { Authorization: 'Bearer ' + localStorage.token },
+        data: {
+          id_orden: this.idOrden,
+          monto_cancelado: this.montoPagado,
+          faltan_cuotas: 1,
+          pago_completo: pagoCompleto
+        }
+      })
+        .then((response) => {
+          this.botonCargando = false
+          this.errores = []
+          this.respuestaServidor = response.data.mensaje
+        })
+        .catch((error) => {
+          this.botonCargando = false
+          this.errores = error.response.data.errors
+        }).finally(() => {
+          this.alerta = true
+          this.cerrarVentanaPago()
+          this.recargarTabla()
+        })
+    },
+    abrirVentanaPago (id, saldo) {
+      this.ventanaPago = true
+      this.idOrden = id
+      this.saldoRestante = saldo
+    },
+    cerrarVentanaPago () {
+      this.ventanaPago = false
+      this.idOrden = null
+      this.montoPagado = null
+      this.saldoRestante = null
+    },
     obtenerOrdenesDeCliente () {
       this.$api({
         method: 'get',
-        url: 'clientes/obtener-ordenes-cliente/' + this.$route.params.id + '/1',
+        url: 'clientes/obtener-ordenes-cliente/' + this.$route.params.id + '/1/' + this.seleccionDeuda,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.ordenesDeTrabajo = response.data.ordenesDelCliente
@@ -124,6 +255,11 @@ export default {
     cerrarVentanModal () {
       this.ventanaModal = false
       this.ingreso = null
+    },
+    recargarTabla () {
+      this.ordenesDeTrabajo = []
+      this.loading = true
+      this.obtenerOrdenesDeCliente()
     }
   }
 }

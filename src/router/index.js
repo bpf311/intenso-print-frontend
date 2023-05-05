@@ -23,6 +23,11 @@ import ListadoDeOrdenesDeTrabajo from '@/views/OrdenDeTrabajo/Listado.vue'
 import CrearOrdenDeTrabajo from '@/views/OrdenDeTrabajo/Crear.vue'
 import EditarOrdenDeTrabajo from '@/views/OrdenDeTrabajo/Editar.vue'
 import DatosOrdenDeTrabajo from '@/views/OrdenDeTrabajo/Datos.vue'
+import CrearPagoOrdenDeTrabajo from '@/views/OrdenDeTrabajo/CrearPago.vue'
+import IndexRol from '@/views/Rol/Index.vue'
+import ListadoDeRoles from '@/views/Rol/Listado.vue'
+import CrearRol from '@/views/Rol/Crear.vue'
+import EditarRol from '@/views/Rol/Editar.vue'
 
 Vue.use(VueRouter)
 
@@ -69,6 +74,29 @@ const routes = [
             name: 'Editar usuario',
             path: 'editar-usuario/:id',
             component: EditarUsuario
+          }
+        ]
+      },
+      {
+        path: '/roles',
+        name: 'Roles',
+        component: IndexRol,
+        redirect: { name: 'Listado de roles' },
+        children: [
+          {
+            name: 'Listado de roles',
+            path: 'listado-roles',
+            component: ListadoDeRoles
+          },
+          {
+            name: 'Registrar rol',
+            path: 'registrar-rol',
+            component: CrearRol
+          },
+          {
+            name: 'Editar rol',
+            path: 'editar-rol/:id',
+            component: EditarRol
           }
         ]
       },
@@ -151,13 +179,18 @@ const routes = [
           },
           {
             name: 'Editar orden de trabajo',
-            path: 'editar-orden-de-trabajo/:id',
+            path: 'editar-orden-de-trabajo/:idOrden/:idOrdenDeTrabajo/:tipoCliente',
             component: EditarOrdenDeTrabajo
           },
           {
             name: 'Datos de orden de trabajo',
             path: 'datos-orden-de-trabajo/:id',
             component: DatosOrdenDeTrabajo
+          },
+          {
+            name: 'Registrar pago de orden de trabajo',
+            path: 'registrar-pago-orden-de-trabajo/:id/:idOrden',
+            component: CrearPagoOrdenDeTrabajo
           }
         ]
       }

@@ -39,7 +39,6 @@
           <v-spacer />
           <v-col cols="12" lg="3">
             <v-text-field
-              v-if="seleccionEstado"
               v-model="busqueda"
               append-icon="mdi-magnify"
               label="Busqueda"
@@ -67,35 +66,12 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="green"
-                  class="rounded-r-0"
-                  small
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                  :to="{
-                    name: 'Datos de orden de trabajo',
-                    params: { id: row.item['id_orden_de_trabajo'] },
-                  }"
-                >
-                  <v-icon>mdi-cash-register</v-icon>
-                </v-btn>
-              </template>
-              <span>Registrar pago</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
                   color="info"
                   class="rounded-0"
                   small
                   dark
                   v-bind="attrs"
                   v-on="on"
-                  :to="{
-                    name: 'Datos de orden de trabajo',
-                    params: { id: row.item['id_orden_de_trabajo'] },
-                  }"
                 >
                   <v-icon>mdi-eye</v-icon>
                 </v-btn>
@@ -112,7 +88,11 @@
                   v-bind="attrs"
                   :to="{
                   name: 'Editar orden de trabajo',
-                  params: { id: row.item['id_orden_de_trabajo'] },
+                  params: {
+                    idOrden: row.item['id_orden'],
+                    idOrdenDeTrabajo: row.item['id_orden_de_trabajo'],
+                    tipoCliente: row.item['id_tipo_de_cliente']
+                  },
                 }"
                   v-on="on"
                 >
@@ -125,7 +105,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="red"
-                  class="rounded-l-0"
+                  class="rounded-0"
                   small
                   dark
                   v-bind="attrs"
@@ -151,7 +131,7 @@
         </v-card-title>
         <v-divider></v-divider>
         <v-card-text class="mt-5">
-          <p class="text-justify text--black">
+          <p class="text-justify black--text">
             Si finaliza la Orden de Trabajo no podra realizar modificaciones posteriores y se descontara del inventario los suministros asignados a esta OT,
             sin embargo aun podra registrar pagos si es que existiera un saldo adicional.
           </p>

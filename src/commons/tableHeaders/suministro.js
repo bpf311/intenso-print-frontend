@@ -4,10 +4,6 @@ const suministroHeaders = [
     value: 'codigo_suministro'
   },
   {
-    text: 'Tipo de suministro',
-    value: 'tipo_suministro'
-  },
-  {
     text: 'Suministro',
     value: 'descripcion_suministro'
   },
@@ -16,16 +12,16 @@ const suministroHeaders = [
     value: 'caracteristicas_unidas'
   },
   {
-    text: 'Unidad de medida',
-    value: 'unidad_de_medida'
+    text: 'Precio unitario',
+    value: 'precio_unitario_suministro'
   },
   {
     text: 'Stock',
     value: 'saldo_suministro'
   },
   {
-    text: 'Precio unitario',
-    value: 'precio_unitario_suministro'
+    text: 'Unidad de medida',
+    value: 'unidad_de_medida'
   },
   {
     text: 'Opciones',
