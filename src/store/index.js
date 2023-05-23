@@ -1,12 +1,9 @@
 import sesion from '../services/sesion'
-const usuario = sesion.obtenerUsuario()
-const permisos = sesion.obtenerPermisos()
-const rol = sesion.obtenerRol()
 export default {
   state: {
-    usuarioActual: usuario,
-    permisosUsuario: permisos,
-    rolUsuario: rol,
+    usuarioActual: null,
+    permisosUsuario: null,
+    rolUsuario: null,
     usuarioAutenticado: false,
     recargar: false,
     pasoRegistroOrdenDeTrabajo: 1,
@@ -42,6 +39,7 @@ export default {
       sesion.guardarDatos(datos)
       state.usuarioActual = sesion.obtenerUsuario()
       state.permisosUsuario = sesion.obtenerPermisos()
+      state.rolUsuario = sesion.obtenerRol()
     },
     cerrarSesion (state) {
       state.usuarioAutenticado = false

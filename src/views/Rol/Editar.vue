@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Editar datos del usuario </h3>
+            <h3 class="text-center text-md-left"> Editar datos y permisos del rol </h3>
           </v-col>
         </v-row>
       </v-container>
@@ -29,92 +29,53 @@
             </ul>
           </v-alert>
           <v-row>
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.nombre_usuario"
-                label="Nombre(s)"
-                outlined
-                prepend-icon="mdi-account-box"
-                color="blue darken-4"
-                @keyup="generarCodigo"
-              />
+            <v-col cols="12" md="6" class="pa-5">
+              <v-row class="elevation-4">
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="rol.rol"
+                    label="Rol"
+                    outlined
+                    prepend-icon="mdi-account-box"
+                    color="blue darken-4"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea
+                    v-model="rol.descripcion_rol"
+                    label="Descripcion"
+                    outlined
+                    prepend-icon="mdi-account-box"
+                    color="blue darken-4"
+                  />
+                </v-col>
+              </v-row>
             </v-col>
-
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.apellido_paterno_usuario"
-                label="Apellido paterno"
-                outlined
-                prepend-icon="mdi-account-box"
-                color="blue darken-4"
-                @keyup="generarCodigo"
-              />
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.apellido_materno_usuario"
-                label="Apellido materno"
-                outlined
-                prepend-icon="mdi-account-box"
-                color="blue darken-4"
-                @keyup="generarCodigo"
-              />
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.celular_usuario"
-                label="Celular"
-                outlined
-                prepend-icon="mdi-cellphone"
-                color="blue darken-4"
-              />
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.correo_usuario"
-                label="Correo"
-                outlined
-                prepend-icon="mdi-email"
-                color="blue darken-4"
-              />
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-select
-                v-model="usuario.id_rol"
-                label="Rol dentro del sistema"
-                outlined
-                prepend-icon="mdi-briefcase-account"
-                :items="roles"
-                item-text="rol"
-                item-value="id_rol"
-                color="blue darken-4"
-              />
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.carnet_identidad_usuario"
-                label="Carnet de identidad"
-                outlined
-                prepend-icon="mdi-numeric"
-                color="blue darken-4"
-                @keyup="generarCodigo"
-              />
-            </v-col>
-
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="usuario.codigo_usuario"
-                label="Codigo de usuario"
-                outlined
-                prepend-icon="mdi-badge-account"
-                color="blue darken-4"
-                disabled
-              />
+            <v-col cols="12" md="6" class="pa-5">
+              <v-row class="elevation-4">
+                <v-col>
+                  <v-simple-table fixed-header height="290px">
+                    <thead>
+                      <tr>
+                        <th>Permiso</th>
+                        <th>Asignar</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="permiso in permisos" :key="permiso.id_permiso">
+                        <td>{{ permiso.permiso }}</td>
+                        <td>
+                          <v-switch
+                            v-model="permisosAsignados"
+                            inset
+                            :value="permiso.id_permiso"
+                          ></v-switch>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </v-simple-table>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-container>
@@ -122,10 +83,10 @@
     </v-card-text>
     <v-card-actions class="mb-2 mr-2">
       <v-spacer />
-      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de usuarios' }">
+      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de roles' }">
         Atras
       </v-btn>
-      <v-btn :loading="botonCargando" color="success" class="mr-0" @click="modificarUsuario()">
+      <v-btn :loading="botonCargando" color="success" class="mr-0" @click="modificarRol()">
         Modificar
       </v-btn>
     </v-card-actions>
@@ -169,40 +130,32 @@ export default {
     respuestaServidor: null,
     alerta: false,
     overlay: true,
-    roles: [],
     errores: [],
-    usuario: []
+    rol: {},
+    permisos: [],
+    permisosAsignados: []
   }),
   created () {
-    this.obtenerRoles()
-    this.obtenerUsuario()
+    this.obtenerPermisos()
+    this.obtenerRol()
   },
   methods: {
-    obtenerRoles () {
+    obtenerPermisos () {
       this.$api({
         method: 'get',
-        url: 'roles/obtener-roles',
+        url: 'permisos/obtener-permisos',
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        this.roles = response.data.roles
+        this.permisos = response.data.permisos
       })
     },
-    modificarUsuario () {
+    modificarRol () {
       this.botonCargando = true
       this.$api({
         method: 'put',
-        url: 'usuarios/modificar-usuario/' + this.$route.params.id,
+        url: 'roles/modificar-rol/' + this.$route.params.id,
         headers: { Authorization: 'Bearer ' + localStorage.token },
-        data: {
-          id_rol: this.usuario.id_rol,
-          nombre_usuario: this.usuario.nombre_usuario,
-          apellido_paterno_usuario: this.usuario.apellido_paterno_usuario,
-          apellido_materno_usuario: this.usuario.apellido_materno_usuario,
-          celular_usuario: this.usuario.celular_usuario,
-          correo_usuario: this.usuario.correo_usuario,
-          carnet_identidad_usuario: this.usuario.carnet_identidad_usuario,
-          codigo_usuario: this.usuario.codigo_usuario
-        }
+        data: this.generarDatos()
       })
         .then((response) => {
           this.botonCargando = false
@@ -216,22 +169,24 @@ export default {
           this.errores = error.response.data.errors
         })
     },
-    obtenerUsuario () {
+    obtenerRol () {
       this.$api({
         method: 'get',
-        url: 'usuarios/editar-usuario/' + this.$route.params.id,
+        url: 'roles/editar-rol/' + this.$route.params.id,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        this.usuario = response.data.usuario
+        const permisos = response.data.rol.permisos.map(permiso => permiso.id_permiso)
+        this.rol = response.data.rol
+        this.permisosAsignados = permisos
         this.overlay = false
       })
     },
-    generarCodigo () {
-      this.usuario.codigo_usuario =
-        this.usuario.nombre_usuario.charAt(0) +
-        this.usuario.apellido_paterno_usuario.charAt(0) +
-        this.usuario.apellido_materno_usuario.charAt(0) +
-        this.usuario.carnet_identidad_usuario
+    generarDatos () {
+      return {
+        rol: this.rol.rol,
+        descripcion_rol: this.rol.descripcion_rol,
+        permisos: this.permisosAsignados
+      }
     }
   }
 }

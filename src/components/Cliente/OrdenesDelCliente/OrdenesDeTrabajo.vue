@@ -20,7 +20,8 @@
           <v-col cols="5">
             <div class="elevation-4 me-4">
               <v-card-subtitle>
-                <h3 class="black--text text-center">Deuda total: {{ deudaTotal }} Bs</h3>
+                <h3 class="black--text text-center">Deuda total:</h3>
+                <h2 class="mt-2 black--text text-center">{{ deudaTotal }} Bs</h2>
               </v-card-subtitle>
             </div>
           </v-col>

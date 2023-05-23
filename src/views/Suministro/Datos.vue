@@ -136,6 +136,9 @@
                 <v-tab-item>
                   <ingresos />
                 </v-tab-item>
+                <v-tab-item>
+                  <egresos />
+                </v-tab-item>
               </v-tabs>
             </v-card-text>
           </v-card>
@@ -162,9 +165,10 @@
 </template>
 <script>
 import ingresos from '../../components/Suministro/Ingreso/Listado.vue'
+import egresos from '../../components/Suministro/Egreso/Listado.vue'
 export default {
   name: 'DatosSuministro',
-  components: { ingresos },
+  components: { ingresos, egresos },
   data: () => ({
     overlay: true,
     loadingSelect: true,

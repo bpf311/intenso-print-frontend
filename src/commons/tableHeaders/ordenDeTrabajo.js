@@ -5,7 +5,7 @@ const ordenDeTrabajoHeaders = [
   },
   {
     text: 'Fecha y hora de registro',
-    value: 'fecha_registro'
+    value: 'fecha_formateada'
   },
   {
     text: 'Cliente',

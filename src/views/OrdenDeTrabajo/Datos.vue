@@ -4,12 +4,14 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Datos de la orden de trabajo </h3>
+            <h3 class="text-center text-md-left">
+              Datos de la orden de trabajo
+            </h3>
           </v-col>
         </v-row>
       </v-container>
     </v-card-title>
-    <v-card-text>
+    <v-card-text v-if="ordenDeTrabajo.orden">
       <v-row>
         <v-col cols="12" md="6">
           <v-card class="fill-height">
@@ -17,39 +19,53 @@
               <v-container class="elevation-4">
                 <v-row>
                   <v-col cols="12" lg="6">
-                    <h3 class="text-center text-md-left"> Cliente </h3>
+                    <h4 class="text-center text-md-left">Cliente</h4>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-title>
-            <v-card-text v-if="ordenDeTrabajo.orden.cliente.id_tipo_de_cliente === 1">
+            <v-card-text>
               <v-row
                 v-if="!overlay"
                 justify="center"
                 class="black--text px-3 mt-3"
               >
                 <v-col cols="5">
-                  <h3 class="font-weight-black">Nombre/Razon social:</h3>
+                  <h3 class="font-weight-black">Razon social:</h3>
                 </v-col>
                 <v-col cols="7">
                   <p class="text-body-1 font-weight-regular">
-                    {{ suministro.tipo_de_suministro.tipo_suministro }}
+                    {{
+                      ordenDeTrabajo.orden.cliente.cliente_empresarial
+                        .razon_social_cliente
+                    }}
                   </p>
                 </v-col>
-              </v-row>
-            </v-card-text>
-            <v-card-text v-if="ordenDeTrabajo.orden.cliente.id_tipo_de_cliente === 2">
-              <v-row
-                v-if="!overlay"
-                justify="center"
-                class="black--text px-3 mt-3"
-              >
                 <v-col cols="5">
-                  <h3 class="font-weight-black">Nombre/Razon social:</h3>
+                  <h3 class="font-weight-black">NIT:</h3>
                 </v-col>
                 <v-col cols="7">
                   <p class="text-body-1 font-weight-regular">
-                    {{ suministro.tipo_de_suministro.tipo_suministro }}
+                    {{
+                      ordenDeTrabajo.orden.cliente.cliente_empresarial
+                        .nit_cliente
+                    }}
+                  </p>
+                </v-col>
+                <v-col cols="5">
+                  <h3 class="font-weight-black">Telefono:</h3>
+                </v-col>
+                <v-col cols="7">
+                  <p class="text-body-1 font-weight-regular">
+                    {{ ordenDeTrabajo.orden.cliente.telefono_cliente }}
+                  </p>
+                </v-col>
+                <v-col cols="5">
+                  <h3 class="font-weight-black">Correo:</h3>
+                </v-col>
+                <v-col cols="7">
+                  <p class="text-body-1 font-weight-regular">
+                    {{ ordenDeTrabajo.orden.cliente.correo_cliente }}
                   </p>
                 </v-col>
               </v-row>
@@ -62,28 +78,55 @@
               <v-container class="elevation-4">
                 <v-row>
                   <v-col cols="12" lg="6">
-                    <h3 class="text-center text-md-left"> Caracteristicas </h3>
+                    <h4 class="text-center text-md-left">Orden de trabajo</h4>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-title>
-            <v-card-text v-if="suministro.caracteristicas && !suministro.caracteristicas.length > 0">
-              <h3 class="text-center">Sin caracteristicas registradas</h3>
-            </v-card-text>
-            <v-card-text v-else>
+            <v-card-text>
               <v-row
-                v-for="(elemento, index) in suministro.caracteristicas"
-                :key="index"
+                v-if="!overlay"
+                justify="center"
                 class="black--text px-3 mt-3"
               >
                 <v-col cols="5">
-                  <h3 class="font-weight-black">
-                    {{ elemento.caracteristica + ":" }}
-                  </h3>
+                  <h3 class="font-weight-black">Código OT:</h3>
                 </v-col>
                 <v-col cols="7">
                   <p class="text-body-1 font-weight-regular">
-                    {{ elemento.pivot.valor_caracteristica }}
+                    {{ ordenDeTrabajo.codigo_orden_de_trabajo }}
+                  </p>
+                </v-col>
+                <v-col cols="5">
+                  <h3 class="font-weight-black">Descripción:</h3>
+                </v-col>
+                <v-col cols="7">
+                  <p class="text-body-1 font-weight-regular">
+                    {{ ordenDeTrabajo.descripcion_orden_de_trabajo }}
+                  </p>
+                </v-col>
+                <v-col cols="5">
+                  <h3 class="font-weight-black">Fecha y hora de registro:</h3>
+                </v-col>
+                <v-col cols="7">
+                  <p class="text-body-1 font-weight-regular">
+                    {{ ordenDeTrabajo.orden.fecha_formateada }}
+                  </p>
+                </v-col>
+                <v-col cols="5">
+                  <h3 class="font-weight-black">Precio total:</h3>
+                </v-col>
+                <v-col cols="7">
+                  <p class="text-body-1 font-weight-regular">
+                    {{ ordenDeTrabajo.orden.precio_total }} Bs
+                  </p>
+                </v-col>
+                <v-col cols="5">
+                  <h3 class="font-weight-black">Monto inicial cancelado:</h3>
+                </v-col>
+                <v-col cols="7">
+                  <p class="text-body-1 font-weight-regular">
+                    {{ ordenDeTrabajo.orden.monto_cancelado }} Bs
                   </p>
                 </v-col>
               </v-row>
@@ -93,30 +136,48 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <v-card>
+          <v-card class="fill-height">
             <v-card-title>
               <v-container class="elevation-4">
                 <v-row>
-                  <v-col cols="12" lg="6">
-                    <h3 class="text-center text-md-left"> Datos adicionales </h3>
+                  <v-col cols="12" md="7">
+                    <h4 class="text-center text-md-left">
+                      Suministros asignados
+                    </h4>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-title>
             <v-card-text>
-              <v-tabs>
-                <v-tab>
-                  <v-icon>mdi-package-down</v-icon>
-                  Ingresos
-                </v-tab>
-                <v-tab>
-                  <v-icon>mdi-package-up</v-icon>
-                  Egresos
-                </v-tab>
-                <v-tab-item>
-                  <ingresos />
-                </v-tab-item>
-              </v-tabs>
+              <v-simple-table class="elevation-4">
+                <thead>
+                  <tr>
+                    <th>Suministro</th>
+                    <th>Precio unitario</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="item in ordenDeTrabajo.orden.suministros"
+                    :key="item.id_suministro"
+                  >
+                    <td>{{ item.descripcion_suministro }}</td>
+                    <td>{{ item.pivot.precio_unitario_suministro }}</td>
+                    <td>{{ item.pivot.cantidad_prevista_suministro }}</td>
+                    <td>
+                      {{
+                        (
+                          item.pivot.precio_unitario_suministro *
+                          item.pivot.cantidad_prevista_suministro
+                        ).toFixed(2)
+                      }}
+                      Bs
+                    </td>
+                  </tr>
+                </tbody>
+              </v-simple-table>
             </v-card-text>
           </v-card>
         </v-col>
@@ -127,12 +188,11 @@
       <v-btn
         color="error"
         class="ml-2"
-        :to="{ name: 'Listado de suministros' }"
+        :to="{ name: 'Listado de ordenes de trabajo' }"
       >
         Atras
       </v-btn>
     </v-card-actions>
-
     <v-overlay :value="overlay" absolute dark opacity="0.8" color="#212121">
       <v-progress-circular indeterminate :size="90" :width="8">
         Cargando
@@ -140,15 +200,14 @@
     </v-overlay>
   </v-card>
 </template>
+
 <script>
-import ingresos from '../../components/Suministro/Ingreso/Listado.vue'
 export default {
-  name: 'DatosSuministro',
-  components: { ingresos },
+  name: 'DatosOrdenDeTrabajo',
   data: () => ({
     overlay: true,
-    loadingSelect: true,
-    ordenDeTrabajo: {}
+    ordenDeTrabajo: [],
+    suministros: []
   }),
   created () {
     this.obtenerDatosOrdenDeTrabajo()
@@ -157,10 +216,15 @@ export default {
     obtenerDatosOrdenDeTrabajo () {
       this.$api({
         method: 'get',
-        url: 'ordenes-de-trabajo/editar-orden-de-trabajo/' + this.$route.params.id,
+        url:
+          'ordenes-de-trabajo/editar-orden-de-trabajo/' +
+          this.$route.params.idOrdenDeTrabajo +
+          '/' +
+          this.$route.params.tipoCliente,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        this.ordenDeTrabajo = response.data.ordenDeTrabajo
+        this.ordenDeTrabajo = response.data.ordenDeTrabajo[0]
+        this.suministros = response.data.suministros
         this.overlay = false
       })
     }

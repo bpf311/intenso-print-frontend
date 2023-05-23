@@ -36,7 +36,7 @@ const menu = [
       {
         title: 'Ingresos',
         icon: 'mdi-cash-plus',
-        to: { name: 'Listado de ingresos' },
+        to: { name: 'Recibos de ingreso' },
         id: 5
       }
     ]
@@ -74,7 +74,7 @@ const menu = [
   {
     title: 'Gestion de proveedores',
     icon: 'mdi-store',
-    to: { name: 'Suministros' },
+    to: { name: 'Proveedores' },
     id: 11
   }
   /* {

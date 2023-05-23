@@ -29,8 +29,8 @@
             </ul>
           </v-alert>
           <v-row>
-            <v-col cols="12" md="6">
-              <v-row>
+            <v-col cols="12" md="6" class="pa-5">
+              <v-row class="elevation-4">
                 <v-col cols="12">
                   <v-text-field
                     v-model="rol.nombre"
@@ -41,7 +41,7 @@
                   />
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
+                  <v-textarea
                     v-model="rol.descripcion"
                     label="Descripcion"
                     outlined
@@ -49,17 +49,16 @@
                     color="blue darken-4"
                   />
                 </v-col>
-                {{ permisosAsignados }}
               </v-row>
             </v-col>
-            <v-col cols="12" md="6">
-              <v-row>
+            <v-col cols="12" md="6" class="pa-5">
+              <v-row class="elevation-4">
                 <v-col>
-                  <v-simple-table>
+                  <v-simple-table fixed-header height="290px">
                     <thead>
-                      <tr>
-                        <th>Permiso</th>
-                        <th>Asignar</th>
+                      <tr >
+                        <th class="font-weight-black black--text">Permiso</th>
+                        <th class="font-weight-black black--text">Estado</th>
                       </tr>
                     </thead>
                     <tbody>

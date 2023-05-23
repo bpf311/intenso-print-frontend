@@ -28,6 +28,12 @@ import IndexRol from '@/views/Rol/Index.vue'
 import ListadoDeRoles from '@/views/Rol/Listado.vue'
 import CrearRol from '@/views/Rol/Crear.vue'
 import EditarRol from '@/views/Rol/Editar.vue'
+import IndexProveedor from '@/views/Proveedor/Index.vue'
+import ListadoDeProveedores from '@/views/Proveedor/Listado.vue'
+import CrearProveedor from '@/views/Proveedor/Crear.vue'
+import EditarProveedor from '@/views/Proveedor/Editar.vue'
+import IndexReciboIngreso from '@/views/ReciboIngreso/Index.vue'
+import ListadoDeRecibosIngreso from '@/views/ReciboIngreso/Listado.vue'
 
 Vue.use(VueRouter)
 
@@ -184,13 +190,49 @@ const routes = [
           },
           {
             name: 'Datos de orden de trabajo',
-            path: 'datos-orden-de-trabajo/:id',
+            path: 'datos-orden-de-trabajo/:idOrden/:idOrdenDeTrabajo/:tipoCliente',
             component: DatosOrdenDeTrabajo
           },
           {
             name: 'Registrar pago de orden de trabajo',
             path: 'registrar-pago-orden-de-trabajo/:id/:idOrden',
             component: CrearPagoOrdenDeTrabajo
+          }
+        ]
+      },
+      {
+        path: '/proveedores',
+        name: 'Proveedores',
+        component: IndexProveedor,
+        redirect: { name: 'Listado de proveedores' },
+        children: [
+          {
+            name: 'Listado de proveedores',
+            path: 'listado-proveedores',
+            component: ListadoDeProveedores
+          },
+          {
+            name: 'Registrar proveedor',
+            path: 'registrar-proveedor',
+            component: CrearProveedor
+          },
+          {
+            name: 'Editar proveedor',
+            path: 'editar-proveedor/:id',
+            component: EditarProveedor
+          }
+        ]
+      },
+      {
+        path: '/recibos-de-ingreso',
+        name: 'Recibos de ingreso',
+        component: IndexReciboIngreso,
+        redirect: { name: 'Listado de recibos de ingreso' },
+        children: [
+          {
+            name: 'Listado de recibos de ingreso',
+            path: 'listado-recibos-de-ingreso',
+            component: ListadoDeRecibosIngreso
           }
         ]
       }

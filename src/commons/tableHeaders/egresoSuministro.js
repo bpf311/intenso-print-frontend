@@ -14,15 +14,15 @@ const ingresoSuministroHeaders = [
     sortable: false
   },
   {
-    text: 'Proveedor',
-    value: 'proveedor.razon_social_proveedor',
+    text: 'Orden',
+    value: 'orden.orden_de_trabajo.codigo_orden_de_trabajo',
     align: 'center',
     divider: true,
     sortable: false
   },
   {
-    text: 'Cantidad ingresada',
-    value: 'cantidad_ingreso',
+    text: 'Cantidad egresada',
+    value: 'cantidad_egreso',
     align: 'center',
     divider: true,
     sortable: false

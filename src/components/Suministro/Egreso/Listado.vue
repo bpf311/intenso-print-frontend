@@ -31,12 +31,12 @@
 </template>
 
 <script>
-import ingresoSuministroHeaders from '../../../commons/tableHeaders/ingresoSuministro'
+import egresoSuministroHeaders from '../../../commons/tableHeaders/egresoSuministro'
 import datos from '../Ingreso/Datos.vue'
 export default {
   components: { datos },
   data: () => ({
-    headers: ingresoSuministroHeaders,
+    headers: egresoSuministroHeaders,
     ventanaModal: false,
     items: [],
     mensaje: '',
@@ -45,7 +45,7 @@ export default {
     ingreso: null
   }),
   created () {
-    this.obtenerIngresosSuministro()
+    this.obtenerEgresosSuministro()
   },
   methods: {
     abrirVentanaModal (datos) {
@@ -56,15 +56,15 @@ export default {
       this.ventanaModal = false
       this.ingreso = null
     },
-    obtenerIngresosSuministro () {
+    obtenerEgresosSuministro () {
       this.$api({
         method: 'get',
         url:
-          'ingresos-de-suministros/obtener-ingresos-de-suministro/' +
+          'egresos-de-suministros/obtener-egresos-de-suministro/' +
           this.$route.params.id,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        this.items = response.data.ingresos
+        this.items = response.data.egresos
         this.loading = false
       })
     }
