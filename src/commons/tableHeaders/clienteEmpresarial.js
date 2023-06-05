@@ -1,15 +1,11 @@
 const clienteEmpresarialHeaders = [
   {
     text: 'Razon social',
-    value: 'cliente_empresarial.razon_social_cliente'
+    value: 'cliente_empresarial.razon_social_tipo_empresa'
   },
   {
     text: 'NIT',
     value: 'cliente_empresarial.nit_cliente'
-  },
-  {
-    text: 'Tipo de empresa',
-    value: 'cliente_empresarial.tipo_de_empresa.tipo_empresa'
   },
   {
     text: 'Celular/Telefono',
@@ -18,6 +14,10 @@ const clienteEmpresarialHeaders = [
   {
     text: 'Correo',
     value: 'correo_cliente'
+  },
+  {
+    text: 'Nombre y celular del contacto',
+    value: 'cliente_empresarial.datos_persona_contacto'
   },
   {
     text: 'Opciones',

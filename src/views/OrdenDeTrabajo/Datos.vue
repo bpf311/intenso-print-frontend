@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left">
+            <h3 style="word-break: normal" class="text-center text-md-left">
               Datos de la orden de trabajo
             </h3>
           </v-col>
@@ -149,35 +149,35 @@
               </v-container>
             </v-card-title>
             <v-card-text>
-              <v-simple-table class="elevation-4">
-                <thead>
-                  <tr>
-                    <th>Suministro</th>
-                    <th>Precio unitario</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="item in ordenDeTrabajo.orden.suministros"
-                    :key="item.id_suministro"
-                  >
-                    <td>{{ item.descripcion_suministro }}</td>
-                    <td>{{ item.pivot.precio_unitario_suministro }}</td>
-                    <td>{{ item.pivot.cantidad_prevista_suministro }}</td>
-                    <td>
-                      {{
-                        (
-                          item.pivot.precio_unitario_suministro *
-                          item.pivot.cantidad_prevista_suministro
-                        ).toFixed(2)
-                      }}
-                      Bs
-                    </td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
+              <v-data-table
+                :headers="[
+                  { text: 'Suministro', value: 'descripcion_suministro' },
+                  {
+                    text: 'Precio unitario',
+                    value: 'pivot.precio_unitario_suministro',
+                  },
+                  {
+                    text: 'Cantidad',
+                    value: 'pivot.cantidad_prevista_suministro',
+                  },
+                  { text: 'Subtotal', value: 'subtotal', sortable: false },
+                ]"
+                :items="ordenDeTrabajo.orden.suministros"
+                item-key="id_suministro"
+                class="elevation-4"
+                fixed-header
+                height="240px"
+              >
+                <template v-slot:[`item.subtotal`]="{ item }">
+                  {{
+                    (
+                      item.pivot.precio_unitario_suministro *
+                      item.pivot.cantidad_prevista_suministro
+                    ).toFixed(2)
+                  }}
+                  Bs
+                </template>
+              </v-data-table>
             </v-card-text>
           </v-card>
         </v-col>
@@ -187,8 +187,7 @@
       <v-spacer />
       <v-btn
         color="error"
-        class="ml-2"
-        :to="{ name: 'Listado de ordenes de trabajo' }"
+        @click="regresar()"
       >
         Atras
       </v-btn>
@@ -207,9 +206,11 @@ export default {
   data: () => ({
     overlay: true,
     ordenDeTrabajo: [],
-    suministros: []
+    suministros: [],
+    vistaAnterior: null
   }),
   created () {
+    this.vistaAnterior = this.$route.params.vistaAnterior
     this.obtenerDatosOrdenDeTrabajo()
   },
   methods: {
@@ -227,6 +228,13 @@ export default {
         this.suministros = response.data.suministros
         this.overlay = false
       })
+    },
+    regresar () {
+      if (this.vistaAnterior === 'Ordenes de cliente') {
+        this.$router.push({ name: this.vistaAnterior, params: { id: this.ordenDeTrabajo.orden.id_cliente } })
+      } else {
+        this.$router.push({ name: this.vistaAnterior })
+      }
     }
   }
 }

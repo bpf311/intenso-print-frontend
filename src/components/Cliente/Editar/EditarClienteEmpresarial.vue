@@ -1,7 +1,7 @@
 <template>
   <div>
     <form>
-      <v-row>
+      <v-row class="elevation-4 pa-3">
         <v-col cols="12" md="4">
           <v-text-field
             v-model="datosCliente['cliente_empresarial'].razon_social_cliente"

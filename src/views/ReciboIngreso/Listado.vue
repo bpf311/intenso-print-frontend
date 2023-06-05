@@ -4,260 +4,106 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Editar datos de la orden de trabajo </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left">
+              Listado de recibos de ingreso
+            </h3>
           </v-col>
         </v-row>
       </v-container>
     </v-card-title>
-    <v-card-text v-if="ordenDeTrabajo.orden">
-      <v-form>
-        <v-container>
-          <v-alert
-            v-if="errores.length !== 0"
-            outlined
-            prominent
-            type="error"
-            elevation="2"
-            text
-            class="mb-8"
-          >
-            Por favor, corrija los siguientes errores
-            <ul>
-              <li v-for="(item, index) in errores" :key="index">
-                {{ item[0] }}
-              </li>
-            </ul>
-          </v-alert>
-          <v-row>
-            <v-col cols="12" class="pa-4">
-              <v-row>
-                <v-col cols="12">
-                  <v-container class="elevation-4">
-                    <v-row>
-                      <v-col cols="12">
-                        <h3 class="text-center text--black"> Datos generales </h3>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-col>
-                <v-col cols="12" md="4">
-                  <v-select
-                    v-model="ordenDeTrabajo.orden.cliente.id_tipo_de_cliente"
-                    label="Tipo de cliente"
-                    outlined
-                    prepend-icon="mdi-briefcase-account"
-                    :items="tiposDeCliente"
-                    item-text="tipo_cliente"
-                    item-value="id_tipo_de_cliente"
-                    color="blue darken-4"
-                    @change="obtenerClientes()"
-                  />
-                </v-col>
-                <v-col cols="12" md="8">
-                  <v-autocomplete
-                    v-model="ordenDeTrabajo.orden.cliente.id_cliente"
-                    :items="clientes"
-                    item-text="datos_unidos"
-                    item-value="id_cliente"
-                    prepend-icon="mdi-card-account-details"
-                    outlined
-                    :loading="loading"
-                    :disabled="inactivo"
-                    label="Cliente"
-                    hint="Seleccione al cliente"
-                    persistent-hint
-                    clearable
-                  />
-                </v-col>
-                <v-col cols="12">
-                  <v-textarea
-                    v-model="ordenDeTrabajo.descripcion_orden_de_trabajo"
-                    label="Descripcion del pedido"
-                    outlined
-                    prepend-icon="mdi-clipboard-list"
-                    color="blue darken-4"
-                  />
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" class="pa-4">
-              <v-row>
-                <v-container class="elevation-4 mb-5">
-                  <v-row>
-                    <v-col cols="12">
-                      <h3 class="text-center text--black"> Asignar suministros </h3>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-col cols="12">
-                  <v-row>
-                    <v-col cols="12" md="6">
-                      <v-container class="elevation-4 mb-5">
-                        <v-row>
-                          <v-col cols="12">
-                            <h3 class="text-center text--black"> Suministros asignados </h3>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                      <v-simple-table class="elevation-4" style="width:100%">
-                        <thead>
-                          <tr>
-                            <th>Suministro</th>
-                            <th style="width:30%">Precio unitario</th>
-                            <th style="width:20%">Cantidad</th>
-                            <th style="width:25%">Subtotal</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="item in ordenDeTrabajo.orden.suministros" :key="item.id_suministro">
-                            <td>{{ item.descripcion_suministro }}</td>
-                            <td>
-                              <v-text-field
-                                v-model="item.pivot.precio_unitario_suministro"
-                                outlined
-                                dense
-                                type="number"
-                                class="my-text-field"
-                                color="blue darken-4"
-                                suffix="Bs"
-                                @input="calcularSubtotal(item)"
-                              />
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="item.pivot.cantidad_prevista_suministro"
-                                outlined
-                                dense
-                                class="my-text-field"
-                                type="number"
-                                color="blue darken-4"
-                                @input="calcularSubtotal(item)"
-                              />
-                            </td>
-                            <td align="end"><p>{{ (item.pivot.precio_unitario_suministro * item.pivot.cantidad_prevista_suministro).toFixed(2) }} Bs</p></td>
-                          </tr>
-                        </tbody>
-                      </v-simple-table>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-container class="elevation-4 mb-5">
-                        <v-row>
-                          <v-col cols="12">
-                            <h3 class="text-center text--black"> Añadir suministros </h3>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                      <v-simple-table class="elevation-4" style="width:100%">
-                        <thead>
-                          <tr>
-                            <th>Suministro</th>
-                            <th style="width:30%">Precio unitario</th>
-                            <th style="width:20%">Cantidad</th>
-                            <th style="width:25%">Subtotal</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="item in suministros" :key="item.id_suministro">
-                            <td>{{ item.descripcion_suministro }}</td>
-                            <td>
-                              <v-text-field
-                                v-model="item.precio_unitario_suministro"
-                                outlined
-                                dense
-                                class="my-text-field"
-                                color="blue darken-4"
-                                suffix="Bs"
-                                @input="calcularSubtotalNuevos(item)"
-                              />
-                            </td>
-                            <td>
-                              <v-text-field
-                                v-model="item.cantidad"
-                                outlined
-                                dense
-                                class="my-text-field"
-                                color="blue darken-4"
-                                @input="calcularSubtotalNuevos(item)"
-                              />
-                            </td>
-                            <td align="end"><p v-if="item.cantidad">{{ (item.precio_unitario_suministro * item.cantidad).toFixed(2) }} Bs</p></td>
-                          </tr>
-                        </tbody>
-                      </v-simple-table>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" class="pa-4">
-              <v-row>
-                <v-container class="elevation-4 mb-5">
-                  <v-row>
-                    <v-col cols="12">
-                      <h3 class="text-center text--black"> Confirmar precio </h3>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="ordenDeTrabajo.orden.precio_total"
-                    label="Precio total"
-                    outlined
-                    prepend-icon="mdi-cash-multiple"
-                    color="blue darken-4"
-                    suffix="Bs"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="ordenDeTrabajo.orden.monto_cancelado"
-                    label="Monto cancelado"
-                    outlined
-                    prepend-icon="mdi-account-cash"
-                    color="blue darken-4"
-                    suffix="Bs"
-                  />
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-form>
+    <v-card-subtitle class="mt-2">
+      <v-container class="elevation-4">
+        <v-row>
+          <v-col cols="12" md="3">
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="seleccionFecha"
+                  label="Seleccione la fecha"
+                  prepend-inner-icon="mdi-calendar"
+                  readonly
+                  outlined
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="seleccionFecha"
+                @input="menu = false"
+                @change="recargarTabla()"
+                :max="fechaActual"
+                first-day-of-week="1"
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-text-field
+              v-model="busqueda"
+              append-icon="mdi-magnify"
+              label="Busqueda"
+              outlined
+              hint="Realize una busqueda"
+              persistent-hint
+            ></v-text-field>
+          </v-col>
+          <v-spacer />
+          <v-col cols="12" md="5">
+            <div class="elevation-4">
+              <v-card-subtitle>
+                <h3 class="black--text text-center">
+                  Total de ingresos en el día:
+                </h3>
+                <h2 class="mt-2 black--text text-center">{{ totalDia }} Bs</h2>
+              </v-card-subtitle>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-subtitle>
+    <v-card-text>
+      <v-data-table
+        :headers="headers"
+        :items="items"
+        :search="busqueda"
+        :loading="loading"
+        loading-text="Cargando"
+        class="elevation-4"
+        fixed-header
+        height="240px"
+      >
+        <template v-slot:item.opciones="row">
+          <div class="d-flex">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="info"
+                  class="rounded-0"
+                  small
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="imprimir(row.item)"
+                >
+                  <v-icon>mdi-printer-pos</v-icon>
+                </v-btn>
+              </template>
+              <span>Imprimir recibo</span>
+            </v-tooltip>
+          </div>
+        </template>
+      </v-data-table>
     </v-card-text>
-    <v-card-actions class="mb-2 mr-2">
-      <v-spacer />
-      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de ordenes de trabajo' }">
-        Atras
-      </v-btn>
-      <v-btn :loading="botonCargando" color="green" class="white--text" @click="modificarOrdenDeTrabajo()">
-        Modificar
-      </v-btn>
-    </v-card-actions>
-    <v-overlay :value="overlay" absolute dark opacity="0.8" color="#212121">
-      <v-progress-circular indeterminate :size="90" :width="8">
-        Cargando
-      </v-progress-circular>
-    </v-overlay>
-    <v-snackbar
-      v-model="alerta"
-      :timeout="4000"
-      color="success"
-      app
-      top
-      right
-    >
+    <v-snackbar v-model="alerta" :timeout="4000" color="success" app top right>
       <v-row align="center" justify="center">
         <v-col cols="2">
-          <v-icon
-            large
-            color="white"
-          >
-            mdi-check-circle-outline
-          </v-icon>
+          <v-icon large color="white"> mdi-check-circle-outline </v-icon>
         </v-col>
         <v-col cols="10" align-self="center">
           <p class="text-center font-weight-black my-auto">
@@ -268,171 +114,175 @@
     </v-snackbar>
   </v-card>
 </template>
-
 <script>
+import reciboIngresoHeaders from '../../commons/tableHeaders/reciboIngreso'
+import moment from 'moment'
 export default {
-  name: 'CrearOrdenDeTrabajo',
+  name: 'ListadoDeRecibosIngreso',
   data: () => ({
-    overlay: true,
-    loading: false,
-    inactivo: true,
-    botonCargando: false,
+    menu: false,
+    headers: reciboIngresoHeaders,
+    busqueda: null,
+    items: [],
     respuestaServidor: null,
     alerta: false,
-    clientes: [],
-    errores: [],
-    clienteSeleccionado: null,
-    ordenDeTrabajo: [],
-    suministros: [],
-    tiposDeCliente: [],
-    tipoDeClienteSeleccionado: null,
-    subtotales: {}
+    loading: true,
+    loadingSelect: true,
+    totalDia: null,
+    seleccionFecha: moment().format('YYYY-MM-DD'),
+    fechaActual: moment().format('YYYY-MM-DD')
   }),
+  activated () {
+    if (this.seleccionRol && this.$store.state.recargar) {
+      this.recargarTabla()
+      this.$store.commit('noRecargarDatos')
+    }
+  },
   created () {
-    this.obtenerDatosOrdenDeTrabajo()
-    this.obtenerTiposDeCliente()
+    this.obtenerPagosDeOrdenesPorFecha()
   },
   methods: {
-    calcularSubtotalNuevos (item) {
-      const id = item.id_suministro
-      if (item.cantidad) {
-        item.subtotal = item.cantidad * item.precio_unitario_suministro
-        this.subtotales[id] = item.subtotal
-      } else {
-        delete this.subtotales[id]
-        delete item.cantidad
-        delete item.subtotal
-      }
-      this.calcularTotal()
-    },
-    calcularSubtotal (item) {
-      const id = item.id_suministro
-      if (item.pivot.cantidad_prevista_suministro > 0) {
-        item.subtotal = (item.pivot.cantidad_prevista_suministro * item.pivot.precio_unitario_suministro).toFixed(2)
-        this.subtotales[id] = item.subtotal
-      } else {
-        delete this.subtotales[id]
-        delete item.cantidad
-        delete item.subtotal
-      }
-      this.calcularTotal()
-    },
-    calcularTotal () {
-      const total = Object.values(this.subtotales).reduce((a, b) => parseFloat(a) + parseFloat(b), 0)
-      if (total > 0) {
-        this.ordenDeTrabajo.orden.precio_total = total.toFixed(2)
-      } else {
-        this.ordenDeTrabajo.orden.precio_total = null
-      }
-    },
-    obtenerTiposDeCliente () {
+    obtenerPagosDeOrdenesPorFecha () {
       this.$api({
         method: 'get',
-        url: 'clientes/obtener-tipos-cliente',
+        url:
+          'pagos-de-ordenes/obtener-pagos-de-ordenes-por-fecha/' +
+          this.seleccionFecha,
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        this.tiposDeCliente = response.data.tiposDeCliente
-        this.loadingSelect = false
-      })
-    },
-    obtenerClientes () {
-      this.clienteSeleccionado = null
-      this.loading = true
-      this.inactivo = true
-      const tipoCliente = this.ordenDeTrabajo.orden.cliente.id_tipo_de_cliente === 1 ? 'empresariales' : 'personales'
-      this.$api({
-        method: 'get',
-        url: 'clientes/obtener-clientes-' + tipoCliente,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
-      }).then((response) => {
-        this.clientes = response.data.clientes
+        const { pagos } = response.data
+        const { totalDia } = response.data
+        console.log(pagos)
+        this.items = pagos
+        this.totalDia = totalDia
         this.loading = false
-        this.inactivo = false
       })
     },
-    obtenerDatosOrdenDeTrabajo () {
-      this.$api({
-        method: 'get',
-        url: 'ordenes-de-trabajo/editar-orden-de-trabajo/' + this.$route.params.idOrdenDeTrabajo + '/' + this.$route.params.tipoCliente,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
-      }).then((response) => {
-        this.ordenDeTrabajo = response.data.ordenDeTrabajo[0]
-        this.suministros = response.data.suministros
-        this.generarObjetoSubtotales()
-        this.obtenerClientes()
-        this.overlay = false
-      })
-    },
-    generarObjetoSubtotales () {
-      this.ordenDeTrabajo.orden.suministros.forEach((elemento) => {
-        this.subtotales[elemento.pivot.id_suministro] = (elemento.pivot.precio_unitario_suministro * elemento.pivot.cantidad_prevista_suministro).toFixed(2)
-      })
-    },
-    modificarOrdenDeTrabajo () {
-      console.log(this.generarDatos())
-      this.botonCargando = true
-      this.$api({
-        method: 'put',
-        url: 'ordenes-de-trabajo/modificar-orden-de-trabajo/' + this.$route.params.idOrden,
-        headers: { Authorization: 'Bearer ' + localStorage.token },
-        data: this.generarDatos()
-      })
-        .then((response) => {
-          this.botonCargando = false
-          this.errores = []
-          this.respuestaServidor = response.data.mensaje
-        })
-        .catch((error) => {
-          this.botonCargando = false
-          this.errores = error.response.data.errors
-        }).finally(() => {
-          this.$store.commit('recargarDatos')
-          this.alerta = true
-        })
-    },
-    generarDatos () {
-      const cantidadesRegistradas = []
-      const preciosUnitariosRegistrados = []
-      const suministrosRegistrados = []
-      const suministros = []
-      const cantidades = []
-      const preciosUnitarios = []
+    imprimir (item) {
+      const ventanaImpresion = window.open('', '_blank')
 
-      const datos = {
-        id_cliente: this.ordenDeTrabajo.orden.cliente.id_cliente,
-        id_tipo_de_orden: 1,
-        precio_total: this.ordenDeTrabajo.orden.precio_total,
-        monto_cancelado: this.ordenDeTrabajo.orden.monto_cancelado,
-        descripcion_orden_de_trabajo: this.ordenDeTrabajo.descripcion_orden_de_trabajo
-      }
+      // Generar el contenido del recibo dinámicamente en la ventana emergente
 
-      this.ordenDeTrabajo.orden.suministros.forEach(function (item) {
-        if (item.pivot.cantidad_prevista_suministro && item.pivot.cantidad_prevista_suministro > 0) {
-          suministrosRegistrados.push(item.id_suministro)
-          cantidadesRegistradas.push(item.pivot.cantidad_prevista_suministro)
-          preciosUnitariosRegistrados.push(item.pivot.precio_unitario_suministro)
+      ventanaImpresion.document.write(`
+      <html>
+        <head>
+          <!-- Estilos CSS para la impresión -->
+          <style>
+            @media print and (width: 55mm) and (height: 150mm) {
+              body {
+                  width: 50mm !important;
+                  height: 150mm !important;
+                  border: 1px solid black !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print">
+            <h2 style="text-align: center;"> INTENSO PRINT </h2>
+            <hr></hr>
+            <p> Cliente: ${item.nombre_razon_social}</p>
+            <p> CI/NIT: ${item.ci_nit}</p>
+            <hr></hr>
+            <p style="text-align: center;">Recibo de ingreso</p>
+            <p> Nro.: ${item.id_recibo_ingreso}</p>
+            <p> Fecha: ${item.fecha_formateada}</p>
+            <p> Concepto: Pago por orden</p>
+            <hr></hr>
+            <p> Monto: ${item.importe_numeral} Bs</p>
+          </div>
+        </body>
+      </html>
+    `)
+
+      ventanaImpresion.document.close()
+      ventanaImpresion.print()
+      /* ventanaImpresion.onload = function () {
+        ventanaImpresion.print()
+        ventanaImpresion.close()
+      } */
+
+      /* const contenidoImprimir = this.generarContenidoImprimir(item)
+
+      // Crea un elemento iframe
+      const iframe = document.createElement('iframe')
+      const style = document.createElement('style')
+      iframe.style.display = 'none'
+      iframe.style.height = '50mm'
+      iframe.style.width = '50mm'
+
+      style.textContent =
+      `@media print {
+        body {
+          background-color: red !important;
+          width: 50mm !important;
+          height: 50mm !important;
         }
-      })
-
-      this.suministros.forEach(function (item) {
-        if (item.cantidad && item.cantidad > 0) {
-          suministros.push(item.id_suministro)
-          cantidades.push(parseInt(item.cantidad))
-          preciosUnitarios.push(item.precio_unitario_suministro)
-        }
-      })
-
-      if (suministros.length > 0 && cantidades.length > 0 && preciosUnitarios.length > 0) {
-        datos.suministros = suministrosRegistrados.concat(suministros)
-        datos.cantidades = cantidadesRegistradas.concat(cantidades)
-        datos.precios = preciosUnitariosRegistrados.concat(preciosUnitarios)
-      } else {
-        datos.suministros = suministrosRegistrados
-        datos.cantidades = cantidadesRegistradas
-        datos.precios = preciosUnitariosRegistrados
       }
+      body {
+        background-color: red !important;
+        width: 50mm !important;
+        height: 50mm !important;
+      }
+      `
 
-      return datos
+      // Agrega el iframe al documento actual
+      document.body.appendChild(iframe)
+      iframe.contentDocument.head.appendChild(style)
+
+      // Establece el contenido del iframe
+      iframe.contentDocument.write(contenidoImprimir)
+
+      iframe.contentDocument.close()
+
+      // Imprime el contenido del iframe
+      iframe.contentWindow.focus()
+      iframe.contentWindow.print()
+
+      // Elimina el iframe del documento
+      document.body.removeChild(iframe) */
+    },
+    generarContenidoImprimir (item) {
+      // Genera el contenido dinámicamente
+      return `<h2 style="text-align: center;"> INTENSO PRINT </h2>
+        <hr></hr>
+        <p> Cliente: ${item.nombre_razon_social}</p>
+        <p> CI/NIT: ${item.ci_nit}</p>
+        <hr></hr>
+        <p style="text-align: center;">Recibo de ingreso</p>
+        <p> Nro.: ${item.id_recibo_ingreso}</p>
+        <p> Fecha: ${item.fecha_formateada}</p>
+        <p> Concepto: Pago por orden</p>
+        <hr></hr>
+        <p> Monto: ${item.importe_numeral} Bs</p>
+       `
+    },
+    /* imprimir (item) {
+      try {
+        console.log(item)
+        // Obtener la impresora seleccionada por el usuario
+        const printerName = 'POS-58'
+
+        // Obtener la ventana actual
+        const ventana = window
+
+        // Imprimir la ventana actual en la impresora seleccionada
+        ventana.print({
+          // Establecer la impresora seleccionada
+          deviceName: printerName,
+
+          // Especificar que se debe imprimir sin mostrar el cuadro de diálogo de impresión
+          silent: true
+        })
+      } catch (e) {
+        alert('Error al imprimir: ' + e.message)
+      }
+    }, */
+    recargarTabla () {
+      this.items = []
+      this.loading = true
+      this.busqueda = null
+      this.obtenerPagosDeOrdenesPorFecha()
     }
   }
 }

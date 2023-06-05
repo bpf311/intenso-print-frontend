@@ -17,7 +17,7 @@
               <v-container class="elevation-4">
                 <v-row>
                   <v-col cols="12" lg="6">
-                    <h3 class="text-center text-md-left"> Datos generales </h3>
+                    <h4 class="text-center text-md-left"> Datos generales </h4>
                   </v-col>
                 </v-row>
               </v-container>
@@ -82,7 +82,7 @@
               <v-container class="elevation-4">
                 <v-row>
                   <v-col cols="12" lg="6">
-                    <h3 class="text-center text-md-left"> Caracteristicas </h3>
+                    <h4 class="text-center text-md-left"> Caracteristicas </h4>
                   </v-col>
                 </v-row>
               </v-container>
@@ -118,28 +118,30 @@
               <v-container class="elevation-4">
                 <v-row>
                   <v-col cols="12" lg="6">
-                    <h3 class="text-center text-md-left"> Datos adicionales </h3>
+                    <h4 class="text-center text-md-left"> Datos adicionales </h4>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-title>
             <v-card-text>
-              <v-tabs>
-                <v-tab>
+              <v-tabs v-model="tab" fixed-tabs class="elevation-4 mb-3">
+                <v-tab href="#tab-1">
                   <v-icon>mdi-package-down</v-icon>
                   Ingresos
                 </v-tab>
-                <v-tab>
+                <v-tab href="#tab-2">
                   <v-icon>mdi-package-up</v-icon>
                   Egresos
                 </v-tab>
-                <v-tab-item>
+              </v-tabs>
+              <v-tabs-items v-model="tab">
+                <v-tab-item value="tab-1">
                   <ingresos />
                 </v-tab-item>
-                <v-tab-item>
+                <v-tab-item value="tab-2">
                   <egresos />
                 </v-tab-item>
-              </v-tabs>
+              </v-tabs-items>
             </v-card-text>
           </v-card>
         </v-col>
@@ -168,11 +170,15 @@ import ingresos from '../../components/Suministro/Ingreso/Listado.vue'
 import egresos from '../../components/Suministro/Egreso/Listado.vue'
 export default {
   name: 'DatosSuministro',
-  components: { ingresos, egresos },
+  components: {
+    ingresos,
+    egresos
+  },
   data: () => ({
     overlay: true,
     loadingSelect: true,
-    suministro: []
+    suministro: [],
+    tab: null
   }),
   created () {
     this.obtenerSuministro()

@@ -4,12 +4,16 @@ const reciboIngresoHeaders = [
     value: 'fecha_formateada'
   },
   {
+    text: 'Codigo Orden',
+    value: 'orden.orden_de_trabajo.codigo_orden_de_trabajo'
+  },
+  {
     text: 'Usuario',
     value: 'usuario.nombre_completo'
   },
   {
     text: 'Cliente',
-    value: 'nombre_razon_social'
+    value: 'cliente.cliente_empresarial.razon_social_cliente'
   },
   {
     text: 'Importe',

@@ -65,49 +65,18 @@ const menu = [
     to: { name: 'Roles' },
     id: 9
   },
-  {
+  /* {
     title: 'Reportes',
     icon: 'mdi-finance',
     to: { name: 'Listado de clientes' },
     id: 10
-  },
+  }, */
   {
     title: 'Gestion de proveedores',
     icon: 'mdi-store',
     to: { name: 'Proveedores' },
     id: 11
   }
-  /* {
-    title: "Productos",
-    icon: "mdi-package",
-    to: { name: "Productos" },
-    id: 2,
-  },
-  {
-    title: "Ingresos",
-    icon: "mdi-archive-arrow-down-outline",
-    to: { name: "Listado de clientes" },
-    id: 4,
-  },
-  {
-    title: "Egresos",
-    icon: "mdi-archive-arrow-up-outline",
-    to: { name: "Listado de clientes" },
-    id: 6,
-  },
-
-  {
-    title: "Ventas",
-    icon: "mdi-cash-register",
-    to: { name: "Listado de clientes" },
-    id: 7,
-  },
-  {
-    title: "Reportes",
-    icon: "mdi-finance",
-    to: { name: "Listado de clientes" },
-    id: 8,
-  }, */
 ]
 
 export default menu

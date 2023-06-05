@@ -7,6 +7,7 @@ import IndexUsuario from '@/views/Usuario/Index.vue'
 import ListadoDeUsuarios from '@/views/Usuario/Listado.vue'
 import CrearUsuario from '@/views/Usuario/Crear.vue'
 import EditarUsuario from '@/views/Usuario/Editar.vue'
+import UsuarioAutenticado from '@/views/Cuenta/Index.vue'
 import IndexCliente from '@/views/Cliente/Index.vue'
 import ListadoDeClientes from '@/views/Cliente/Listado.vue'
 import CrearCliente from '@/views/Cliente/Crear.vue'
@@ -59,6 +60,11 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard
+      },
+      {
+        name: 'Cuenta de usuario',
+        path: 'cuenta-usuario',
+        component: UsuarioAutenticado
       },
       {
         path: '/usuarios',
@@ -190,7 +196,7 @@ const routes = [
           },
           {
             name: 'Datos de orden de trabajo',
-            path: 'datos-orden-de-trabajo/:idOrden/:idOrdenDeTrabajo/:tipoCliente',
+            path: 'datos-orden-de-trabajo/:idOrden/:idOrdenDeTrabajo/:tipoCliente/:vistaAnterior',
             component: DatosOrdenDeTrabajo
           },
           {

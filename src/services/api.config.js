@@ -2,7 +2,7 @@ import axios from 'axios'
 import Vue from 'vue'
 
 const desarrollo = iniciarAPI('http://127.0.0.1:8000/api/')
-// const produccion = iniciarAPI('http://localhost:3000')
+// const produccion = iniciarAPI('https://intenso-print-backend-production.up.railway.app/api/')
 
 function iniciarAPI (baseURL) {
   return axios.create({

@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Listado de proveedores </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left"> Listado de proveedores </h3>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" lg="2">

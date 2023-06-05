@@ -3,7 +3,7 @@
     <v-card-subtitle>
       <v-container class="elevation-4">
         <v-row class="mt-2">
-          <v-col>
+          <v-col cols="12" md="4">
             <v-select
               v-model="seleccionDeuda"
               outlined
@@ -17,7 +17,7 @@
             />
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="5">
+          <v-col cols="12" md="5">
             <div class="elevation-4 me-4">
               <v-card-subtitle>
                 <h3 class="black--text text-center">Deuda total:</h3>
@@ -38,7 +38,7 @@
         fixed-header
         height="240px"
       >
-        <template v-slot:item.estado="{ item }">
+        <template v-slot:[`item.estado`]="{ item }">
           <v-chip
             :color="colorDeFondo(item.estado)"
             dark
@@ -46,18 +46,26 @@
             {{ item.estado }}
           </v-chip>
         </template>
-        <template v-slot:item.opciones="row">
+        <template v-slot:[`item.opciones`]="row">
           <div class="d-flex">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="info"
-                  class="rounded-r-0"
+                  class="rounded-0"
                   small
                   dark
                   v-bind="attrs"
                   v-on="on"
-                  @click="abrirVentanaModal(row.item)"
+                  :to="{
+                    name: 'Datos de orden de trabajo',
+                    params: {
+                      idOrden: row.item['id_orden'],
+                      idOrdenDeTrabajo: row.item['id_orden_de_trabajo'],
+                      tipoCliente: row.item['id_tipo_de_cliente'],
+                      vistaAnterior: 'Ordenes de cliente'
+                    }
+                  }"
                 >
                   <v-icon>mdi-eye</v-icon>
                 </v-btn>
@@ -68,7 +76,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   color="green"
-                  class="rounded-l-0"
+                  class="rounded-0"
                   small
                   dark
                   v-bind="attrs"
@@ -86,6 +94,7 @@
     </v-card-text>
     <v-dialog
       v-model="ventanaPago"
+      persistent
       width="500"
     >
       <v-card>
@@ -191,11 +200,11 @@ export default {
   }),
   created () {
     this.obtenerOrdenesDeCliente()
+    console.log(this.ordenesDeTrabajo)
   },
   methods: {
     registrarPagoOrdenDeTrabajo () {
       const pagoCompleto = parseFloat(this.saldoRestante).toFixed(2) === parseFloat(this.montoPagado).toFixed(2) ? 1 : 0
-      console.log(pagoCompleto)
       this.botonCargando = true
       this.$api({
         method: 'post',
@@ -203,8 +212,8 @@ export default {
         headers: { Authorization: 'Bearer ' + localStorage.token },
         data: {
           id_orden: this.idOrden,
+          id_cliente: this.$route.params.id,
           monto_cancelado: this.montoPagado,
-          faltan_cuotas: 1,
           pago_completo: pagoCompleto
         }
       })
@@ -240,6 +249,7 @@ export default {
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.ordenesDeTrabajo = response.data.ordenesDelCliente
+        console.log(this.ordenesDeTrabajo)
         this.deudaTotal = response.data.deudaTotal
         this.loading = false
         this.overlay = false

@@ -55,7 +55,7 @@
       <v-app-bar-nav-icon @click.stop="menu = !menu" />
       <v-spacer />
       <v-avatar class="mr-1">
-        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+        <img src="@/assets/avatar.png" alt="John" />
       </v-avatar>
       <div class="text-center">
         <v-menu offset-y rounded="lg" transition="fab-transition">
@@ -66,7 +66,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item class="opcionesUsuario" to="/">
+            <v-list-item class="opcionesUsuario" :to="{ name: 'Cuenta de usuario' }">
               <v-list-item-icon>
                 <v-icon>mdi-account</v-icon>
               </v-list-item-icon>
@@ -130,7 +130,6 @@ export default {
         url: 'sesion/cerrar-sesion',
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
-        console.log(response.data)
         this.$store.commit('cerrarSesion')
         this.$router.replace({ name: 'Inicio de sesion' })
       })

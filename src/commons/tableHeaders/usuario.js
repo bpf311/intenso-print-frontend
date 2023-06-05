@@ -1,15 +1,15 @@
 const usuarioHeaders = [
   {
-    text: 'Nombre',
-    value: 'nombre_usuario'
+    text: 'Nombre completo',
+    value: 'nombre_completo'
   },
   {
-    text: 'Apellido Paterno',
-    value: 'apellido_paterno_usuario'
+    text: 'Celular',
+    value: 'celular_usuario'
   },
   {
-    text: 'Apellido Materno',
-    value: 'apellido_materno_usuario'
+    text: 'Correo',
+    value: 'correo_usuario'
   },
   {
     text: 'Codigo de usuario',

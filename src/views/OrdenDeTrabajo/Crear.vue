@@ -4,7 +4,9 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Registrar nueva orden de trabajo </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left">
+              Registrar nueva orden de trabajo
+            </h3>
           </v-col>
         </v-row>
       </v-container>
@@ -28,14 +30,14 @@
               </li>
             </ul>
           </v-alert>
-          <v-row>
+          <v-row class="elevation-4 my-4">
             <v-col cols="12" class="pa-4">
               <v-row>
                 <v-col cols="12">
                   <v-container class="elevation-4">
                     <v-row>
                       <v-col cols="12">
-                        <h3 class="text-center text--black"> Datos generales </h3>
+                        <h3 class="text-center black--text">Datos generales</h3>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -53,7 +55,7 @@
                     @change="obtenerClientes()"
                   />
                 </v-col>
-                <v-col cols="12" md="8">
+                <v-col cols="12" md="6">
                   <v-autocomplete
                     v-model="clienteSeleccionado"
                     :items="clientes"
@@ -69,6 +71,16 @@
                     clearable
                   />
                 </v-col>
+                <v-col cols="12" md="2">
+                  <v-btn
+                    color="green"
+                    block
+                    class="white--text"
+                    :to="{ name: 'Registrar cliente' }"
+                  >
+                    Nuevo cliente
+                  </v-btn>
+                </v-col>
                 <v-col cols="12">
                   <v-textarea
                     v-model="ordenDeTrabajo.descripcion"
@@ -81,70 +93,97 @@
               </v-row>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="elevation-4 my-4">
             <v-col cols="12" class="pa-4">
               <v-row>
-                <v-container class="elevation-4 mb-5">
-                  <v-row>
-                    <v-col cols="12">
-                      <h3 class="text-center text--black"> Asignar suministros </h3>
-                    </v-col>
-                  </v-row>
-                </v-container>
                 <v-col cols="12">
-                  <v-simple-table class="elevation-4" style="width:100%">
-                    <thead>
-                      <tr>
-                        <th>Suministro</th>
-                        <th>Stock</th>
-                        <th style="width:20%">Precio unitario</th>
-                        <th style="width:20%">Cantidad</th>
-                        <th style="width:20%">Subtotal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="item in items" :key="item.id_suministro">
-                        <td>{{ item.descripcion_suministro }}</td>
-                        <td>{{ item.saldo_suministro }}</td>
-                        <td>
-                          <v-text-field
-                            v-model="item.precio_unitario_suministro"
-                            outlined
-                            dense
-                            class="my-text-field"
-                            color="blue darken-4"
-                            suffix="Bs"
-                            @input="calcularSubtotal(item)"
-                          />
-                        </td>
-                        <td>
-                          <v-text-field
-                            v-model="item.cantidad"
-                            outlined
-                            dense
-                            class="my-text-field"
-                            color="blue darken-4"
-                            @input="calcularSubtotal(item)"
-                          />
-                        </td>
-                        <td align="end"><p v-if="item.cantidad">{{ (item.precio_unitario_suministro * item.cantidad).toFixed(2) }} Bs</p></td>
-                      </tr>
-                    </tbody>
-                  </v-simple-table>
+                  <v-container class="elevation-4">
+                    <v-row>
+                      <v-col cols="12">
+                        <h3 class="text-center black--text">
+                          Asignar suministros
+                        </h3>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-col>
+                <v-col cols="12">
+                  <v-data-table
+                    :headers="[
+                      { text: 'Suministro', value: 'descripcion_suministro' },
+                      { text: 'Stock', value: 'saldo_suministro' },
+                      {
+                        text: 'Precio unitario',
+                        value: 'precio_unitario_suministro',
+                        width: '20%',
+                      },
+                      { text: 'Cantidad', value: 'cantidad', width: '20%' },
+                      {
+                        text: 'Subtotal',
+                        value: 'subtotal',
+                        sortable: false,
+                        width: '30%',
+                      },
+                    ]"
+                    :items="items"
+                    item-key="id_suministro"
+                    class="elevation-4"
+                  >
+                    <template
+                      v-slot:[`item.precio_unitario_suministro`]="{ item }"
+                    >
+                      <v-text-field
+                        v-model="item.precio_unitario_suministro"
+                        outlined
+                        dense
+                        type="number"
+                        class="my-text-field"
+                        color="blue darken-4"
+                        suffix="Bs"
+                        @input="calcularSubtotal(item)"
+                      />
+                    </template>
+                    <template v-slot:[`item.cantidad`]="{ item }">
+                      <v-text-field
+                        v-model="item.cantidad"
+                        outlined
+                        dense
+                        type="number"
+                        min="1"
+                        class="my-text-field"
+                        color="blue darken-4"
+                        @input="calcularSubtotal(item)"
+                      />
+                    </template>
+                    <template v-slot:[`item.subtotal`]="{ item }">
+                      <p v-if="item.cantidad">
+                        {{
+                          (
+                            item.precio_unitario_suministro * item.cantidad
+                          ).toFixed(2)
+                        }}
+                        Bs
+                      </p>
+                    </template>
+                  </v-data-table>
                 </v-col>
               </v-row>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="elevation-4 my-4">
             <v-col cols="12" class="pa-4">
               <v-row>
-                <v-container class="elevation-4 mb-5">
-                  <v-row>
-                    <v-col cols="12">
-                      <h3 class="text-center text--black"> Confirmar precio </h3>
-                    </v-col>
-                  </v-row>
-                </v-container>
+                <v-col cols="12">
+                  <v-container class="elevation-4">
+                    <v-row>
+                      <v-col cols="12">
+                        <h3 class="text-center black--text">
+                          Confirmar precio
+                        </h3>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
                     v-model="ordenDeTrabajo.precioTotal"
@@ -173,29 +212,26 @@
     </v-card-text>
     <v-card-actions class="mb-2 mr-2">
       <v-spacer />
-      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de ordenes de trabajo' }">
+      <v-btn
+        color="error"
+        class="ml-2"
+        :to="{ name: 'Listado de ordenes de trabajo' }"
+      >
         Atras
       </v-btn>
-      <v-btn :loading="botonCargando" color="green" class="white--text" @click="registrarOrdenDeTrabajo()">
+      <v-btn
+        :loading="botonCargando"
+        color="green"
+        class="white--text"
+        @click="registrarOrdenDeTrabajo()"
+      >
         Registrar
       </v-btn>
     </v-card-actions>
-    <v-snackbar
-      v-model="alerta"
-      :timeout="4000"
-      color="success"
-      app
-      top
-      right
-    >
+    <v-snackbar v-model="alerta" :timeout="4000" color="success" app top right>
       <v-row align="center" justify="center">
         <v-col cols="2">
-          <v-icon
-            large
-            color="white"
-          >
-            mdi-check-circle-outline
-          </v-icon>
+          <v-icon large color="white"> mdi-check-circle-outline </v-icon>
         </v-col>
         <v-col cols="10" align-self="center">
           <p class="text-center font-weight-black my-auto">
@@ -207,9 +243,9 @@
   </v-card>
 </template>
 <style>
-  .my-text-field .v-text-field__details {
-    display: none;
-  }
+.my-text-field .v-text-field__details {
+  display: none;
+}
 </style>
 <script>
 export default {
@@ -262,8 +298,7 @@ export default {
     obtenerSuministros () {
       this.$api({
         method: 'get',
-        url:
-          'suministros/obtener-suministros/1/todos',
+        url: 'suministros/obtener-suministros/1/todos',
         /* 'suministros/obtener-suministros/' +
           this.seleccionTipoSuministro +
           '/' + this.seleccionStock, */
@@ -287,7 +322,8 @@ export default {
       this.clienteSeleccionado = null
       this.loading = true
       this.inactivo = true
-      const tipoCliente = this.tipoDeClienteSeleccionado === 1 ? 'empresariales' : 'personales'
+      const tipoCliente =
+        this.tipoDeClienteSeleccionado === 1 ? 'empresariales' : 'personales'
       this.$api({
         method: 'get',
         url: 'clientes/obtener-clientes-' + tipoCliente,
@@ -314,7 +350,8 @@ export default {
         .catch((error) => {
           this.botonCargando = false
           this.errores = error.response.data.errors
-        }).finally(() => {
+        })
+        .finally(() => {
           this.$store.commit('recargarDatos')
           this.clienteSeleccionado = null
           this.suministros = []

@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Listado de usuarios </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left"> Listado de usuarios </h3>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" lg="2">
@@ -83,25 +83,6 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  color="info"
-                  class="rounded-r-0"
-                  small
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                  :to="{
-                    name: 'Editar usuario',
-                    params: { id: row.item['id_usuario'] },
-                  }"
-                >
-                  <v-icon>mdi-eye</v-icon>
-                </v-btn>
-              </template>
-              <span>Ver datos</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
                   color="secondary"
                   class="rounded-0"
                   small
@@ -122,7 +103,7 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   :color="row.item['estado_usuario'] === 1 ? 'red' : 'green darken-2'"
-                  class="rounded-l-0"
+                  class="rounded-0"
                   small
                   dark
                   v-bind="attrs"
@@ -138,11 +119,9 @@
                 </v-btn>
               </template>
               <span v-if="row.item['estado_usuario'] === 1"
-              >Desactivar cuenta</span
-              >
+              >Desactivar cuenta</span>
               <span v-if="row.item['estado_usuario'] === 0"
-              >Activar cuenta</span
-              >
+              >Activar cuenta</span>
             </v-tooltip>
           </div>
         </template>

@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Registrar nuevo suministro </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left"> Registrar nuevo suministro </h3>
           </v-col>
         </v-row>
       </v-container>
@@ -30,101 +30,116 @@
           </v-alert>
           <v-row>
             <v-col cols="12" md="6">
-              <v-select
-                v-model="suministro.tipoSuministro"
-                label="Tipo de suministro"
-                outlined
-                prepend-icon="mdi-package-variant"
-                :items="tiposDeSuministros"
-                item-text="tipo_suministro"
-                return-object
-                color="blue darken-4"
-                :loading="loadingSelect"
-              />
+              <v-card elevation="5" class="rounded-lg fill-height">
+                <v-card-title class="mb-3">
+                  <v-container class="elevation-4">
+                    <v-row align="center" justify="center">
+                      <v-col cols="12" lg="6">
+                        <h4 class="text-center"> Datos generales </h4>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-title>
+                <v-card-text>
+                  <v-row justify="center" align="center">
+                    <v-col cols="10">
+                      <v-select
+                        v-model="suministro.tipoSuministro"
+                        label="Tipo de suministro"
+                        outlined
+                        prepend-icon="mdi-package-variant"
+                        :items="tiposDeSuministros"
+                        item-text="tipo_suministro"
+                        return-object
+                        color="blue darken-4"
+                        :loading="loadingSelect"
+                      />
+                    </v-col>
+                    <v-col cols="10">
+                      <v-text-field
+                        v-model="suministro.descripcion"
+                        label="Nombre/Descripcion del suministro"
+                        outlined
+                        prepend-icon="mdi-account-box"
+                        color="blue darken-4"
+                      />
+                    </v-col>
+                    <v-col cols="10">
+                      <v-text-field
+                        v-model="suministro.precioUnitario"
+                        label="Precio unitario de venta"
+                        outlined
+                        prepend-icon="mdi-cash-multiple"
+                        color="blue darken-4"
+                      />
+                    </v-col>
+                    <v-col cols="10">
+                      <v-select
+                        v-model="suministro.unidadMedida"
+                        label="Unidad de medida"
+                        outlined
+                        prepend-icon="mdi-package-variant"
+                        :items="unidadesDeMedidas"
+                        item-text="unidad_de_medida"
+                        item-value="id_unidad_de_medida"
+                        color="blue darken-4"
+                        :loading="loadingSelect"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="suministro.descripcion"
-                label="Nombre/Descripcion del suministro"
-                outlined
-                prepend-icon="mdi-account-box"
-                color="blue darken-4"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="suministro.unidadMedida"
-                label="Unidad de medida"
-                outlined
-                prepend-icon="mdi-package-variant"
-                :items="unidadesDeMedidas"
-                item-text="unidad_de_medida"
-                item-value="id_unidad_de_medida"
-                color="blue darken-4"
-                :loading="loadingSelect"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="suministro.precioUnitario"
-                label="Precio unitario de venta"
-                outlined
-                prepend-icon="mdi-cash-multiple"
-                color="blue darken-4"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="caracteristicasSeleccionadas"
-                label="Caracteristicas a registrar"
-                :items="caracteristicas"
-                item-text="caracteristica"
-                outlined
-                multiple
-                return-object
-                chips
-                deletable-chips
-                prepend-icon="mdi-list-box-outline"
-                color="blue darken-4"
-                small-chips
-                hide-selected
-                clearable
-              />
-            </v-col>
-            <v-col
-              v-if="caracteristicasSeleccionadas.length !== 0"
-              cols="12"
-              md="6"
-            >
-              <v-simple-table
-                class="elevation-2 fill-height"
-                fixed-header
-                height="321px"
-              >
-                <template v-slot:default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Caracteristica seleccionada</th>
-                      <th class="text-left">Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(item, index) in caracteristicasSeleccionadas"
-                      :key="index"
-                    >
-                      <td>{{ item.caracteristica }}</td>
-                      <td>
-                        <v-text-field
-                          v-model="item.valor"
-                          label="Valor"
-                          single-line
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
+              <v-card elevation="5" class="rounded-lg fill-height">
+                <v-card-title class="mb-3">
+                  <v-container class="elevation-4">
+                    <v-row align="center" justify="center">
+                      <v-col cols="12" lg="6">
+                        <h4 class="text-center"> Caracteristicas </h4>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-title>
+                <v-card-text>
+                  <v-row>
+                    <v-col cols="12" md="12">
+                      <v-select
+                        v-model="caracteristicasSeleccionadas"
+                        label="Seleccione las caracteristicas"
+                        :items="caracteristicas"
+                        item-text="caracteristica"
+                        outlined
+                        multiple
+                        return-object
+                        chips
+                        deletable-chips
+                        prepend-icon="mdi-list-box-outline"
+                        color="blue darken-4"
+                        small-chips
+                        hide-selected
+                        clearable
+                        :loading="loadingSelect"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row v-for="(item, index) in caracteristicasSeleccionadas" :key="index">
+                    <v-col cols="4" md="4">
+                      <v-subheader class="black--text font-weight-bold">
+                        {{ item.caracteristica }}:
+                      </v-subheader>
+                    </v-col>
+                    <v-col cols="8" md="8">
+                      <v-text-field
+                        v-model="item.valor"
+                        label="Valor de la caracteristica"
+                        outlined
+                        color="blue darken-4"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
             </v-col>
           </v-row>
         </v-container>
@@ -174,7 +189,11 @@
     </v-snackbar>
   </v-card>
 </template>
-
+<style>
+.my-text-field .v-text-field__details {
+  display: none;
+}
+</style>
 <script>
 export default {
   name: 'CrearSuministro',

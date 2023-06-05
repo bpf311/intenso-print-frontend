@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left">
+            <h3 style="word-break: normal" class="text-center text-md-left">
               Listado de ordenes de trabajo
             </h3>
           </v-col>
@@ -63,7 +63,7 @@
         fixed-header
         height="240px"
       >
-        <template v-slot:item.opciones="row">
+        <template v-slot:[`item.opciones`]="row">
           <div class="d-flex">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -80,7 +80,8 @@
                       idOrden: row.item['id_orden'],
                       idOrdenDeTrabajo: row.item['id_orden_de_trabajo'],
                       tipoCliente: row.item['id_tipo_de_cliente'],
-                    },
+                      vistaAnterior: 'Listado de ordenes de trabajo'
+                    }
                   }"
                 >
                   <v-icon>mdi-eye</v-icon>
@@ -101,8 +102,8 @@
                     params: {
                       idOrden: row.item['id_orden'],
                       idOrdenDeTrabajo: row.item['id_orden_de_trabajo'],
-                      tipoCliente: row.item['id_tipo_de_cliente'],
-                    },
+                      tipoCliente: row.item['id_tipo_de_cliente']
+                    }
                   }"
                   v-on="on"
                 >
@@ -143,8 +144,8 @@
           <p class="text-justify black--text">
             Si finaliza la Orden de Trabajo no podra realizar modificaciones
             posteriores y se descontara del inventario los suministros asignados
-            a esta OT, sin embargo aun podra registrar pagos si es que existiera
-            un saldo adicional.
+            a esta orden, sin embargo aun podra registrar pagos si es que existiera
+            un saldo pendiente.
           </p>
         </v-card-text>
         <v-divider></v-divider>

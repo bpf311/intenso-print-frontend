@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Editar datos del suministro </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left"> Editar datos del suministro </h3>
           </v-col>
         </v-row>
       </v-container>
@@ -31,18 +31,18 @@
           <v-row>
             <v-col cols="12" md="6">
               <v-card elevation="5" class="rounded-lg fill-height">
-                <v-card-title>
+                <v-card-title class="mb-3">
                   <v-container class="elevation-4">
                     <v-row>
                       <v-col cols="12" lg="6">
-                        <h3 class="text-center text-md-left"> Datos generales </h3>
+                        <h4 class="text-center text-md-left"> Datos generales </h4>
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-title>
                 <v-card-text>
                   <v-row justify="center" align="center">
-                    <v-col class="mt-5" cols="10">
+                    <v-col cols="10">
                       <v-text-field
                         v-model="suministro.descripcion_suministro"
                         label="Nombre/Descripcion del suministro"
@@ -51,7 +51,7 @@
                         color="blue darken-4"
                       />
                     </v-col>
-                    <v-col class="mt-5" cols="10">
+                    <v-col cols="10">
                       <v-text-field
                         v-model="suministro.precio_unitario_suministro"
                         label="Precio unitario de venta"
@@ -79,18 +79,18 @@
             </v-col>
             <v-col cols="12" md="6">
               <v-card elevation="5" class="rounded-lg fill-height">
-                <v-card-title>
+                <v-card-title class="mb-3">
                   <v-container class="elevation-4">
                     <v-row>
                       <v-col cols="12" lg="6">
-                        <h3 class="text-center text-md-left"> Caracteristicas </h3>
+                        <h4 class="text-center text-md-left"> Caracteristicas </h4>
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-title>
                 <v-card-text>
                   <v-row justify="center" align="center">
-                    <v-col class="mt-5" cols="10">
+                    <v-col cols="10">
                       <v-select
                         v-model="caracteristicasRegistradas"
                         label="Caracteristicas a registrar"

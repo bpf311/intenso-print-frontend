@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Editar datos del usuario </h3>
+            <h3 class="text-center text-md-left"> Editar datos del proveedor </h3>
           </v-col>
         </v-row>
       </v-container>
@@ -57,7 +57,7 @@
               />
             </v-col>
             <v-col cols="12" class="elevation-4 mb-5 text-center">
-              <h2>Persona de contacto</h2>
+              <h3 class="black--text">Persona de contacto</h3>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field

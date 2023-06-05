@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 style="word-break: normal" class="text-center text-md-left"> Registrar nuevo usuario </h3>
+            <h3 class="text-center text-md-left">Editar datos personales</h3>
           </v-col>
         </v-row>
       </v-container>
@@ -21,7 +21,7 @@
             text
             class="mb-8"
           >
-            Por favor, corrija los siguientes errores
+            Por favor, corrija el/los siguiente(s) error(es):
             <ul>
               <li v-for="(item, index) in errores" :key="index">
                 {{ item[0] }}
@@ -29,22 +29,9 @@
             </ul>
           </v-alert>
           <v-row class="elevation-4 pa-3">
-            <v-col cols="12">
-              <v-alert
-                border="bottom"
-                outlined
-                type="info"
-                elevation="2"
-                prominent
-              >
-                <p class="black--text">
-                  Recuerde que la contraseña del nuevo usuario registrado será su numero de carnet de identidad.
-                </p>
-              </v-alert>
-            </v-col>
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.nombre"
+                v-model="usuario.nombre_usuario"
                 label="Nombre(s)"
                 outlined
                 prepend-icon="mdi-account-box"
@@ -52,9 +39,10 @@
                 @keyup="generarCodigo"
               />
             </v-col>
+
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.apellidoPaterno"
+                v-model="usuario.apellido_paterno_usuario"
                 label="Apellido paterno"
                 outlined
                 prepend-icon="mdi-account-box"
@@ -62,9 +50,10 @@
                 @keyup="generarCodigo"
               />
             </v-col>
+
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.apellidoMaterno"
+                v-model="usuario.apellido_materno_usuario"
                 label="Apellido materno"
                 outlined
                 prepend-icon="mdi-account-box"
@@ -72,39 +61,30 @@
                 @keyup="generarCodigo"
               />
             </v-col>
+
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.celular"
+                v-model="usuario.celular_usuario"
                 label="Celular"
                 outlined
                 prepend-icon="mdi-cellphone"
                 color="blue darken-4"
               />
             </v-col>
+
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.correo"
+                v-model="usuario.correo_usuario"
                 label="Correo"
                 outlined
                 prepend-icon="mdi-email"
                 color="blue darken-4"
               />
             </v-col>
-            <v-col cols="12" md="4">
-              <v-select
-                v-model="usuario.rol"
-                label="Rol dentro del sistema"
-                outlined
-                prepend-icon="mdi-briefcase-account"
-                :items="roles"
-                item-text="rol"
-                item-value="id_rol"
-                color="blue darken-4"
-              />
-            </v-col>
+
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.carnet"
+                v-model="usuario.carnet_identidad_usuario"
                 label="Carnet de identidad"
                 outlined
                 prepend-icon="mdi-numeric"
@@ -112,9 +92,10 @@
                 @keyup="generarCodigo"
               />
             </v-col>
+
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="usuario.codigo"
+                v-model="usuario.codigo_usuario"
                 label="Codigo de usuario"
                 outlined
                 prepend-icon="mdi-badge-account"
@@ -123,34 +104,51 @@
               />
             </v-col>
           </v-row>
+          <v-row align="center" class="elevation-4 mt-5 pa-3">
+            <v-col cols="12" md="6">
+              <v-alert
+                border="bottom"
+                outlined
+                type="warning"
+                elevation="2"
+                prominent
+              >
+                <p class="black--text">
+                  Ingrese una nueva contraseña solo si desea modificar su contraseña actual.
+                </p>
+              </v-alert>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="contraseña"
+                label="Nueva contraseña"
+                outlined
+                prepend-icon="mdi-lock"
+                color="blue darken-4"
+                :type="mostrarContraseña ? 'text' : 'password'"
+                @click:append="mostrarContraseña = !mostrarContraseña"
+                :append-icon="mostrarContraseña ? 'mdi-eye' : 'mdi-eye-off'"
+              />
+            </v-col>
+          </v-row>
         </v-container>
       </v-form>
     </v-card-text>
     <v-card-actions class="mb-2 mr-2">
       <v-spacer />
-      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de usuarios' }">
-        Atras
-      </v-btn>
-      <v-btn :loading="botonCargando" color="green" class="white--text" @click="registrarUsuario()">
-        Registrar
+      <v-btn
+        :loading="botonCargando"
+        color="success"
+        class="mr-0"
+        @click="modificarUsuario()"
+      >
+        Modificar
       </v-btn>
     </v-card-actions>
-    <v-snackbar
-      v-model="alerta"
-      :timeout="4000"
-      color="success"
-      app
-      top
-      right
-    >
+    <v-snackbar v-model="alerta" :timeout="4000" color="success" app top right>
       <v-row align="center" justify="center">
         <v-col cols="2">
-          <v-icon
-            large
-            color="white"
-          >
-            mdi-check-circle-outline
-          </v-icon>
+          <v-icon large color="white"> mdi-check-circle-outline </v-icon>
         </v-col>
         <v-col cols="10" align-self="center">
           <p class="text-center font-weight-black my-auto">
@@ -159,63 +157,42 @@
         </v-col>
       </v-row>
     </v-snackbar>
+    <v-overlay :value="overlay" absolute dark opacity="0.8" color="#212121">
+      <v-progress-circular indeterminate :size="90" :width="8">
+        Cargando
+      </v-progress-circular>
+    </v-overlay>
   </v-card>
 </template>
 
 <script>
 export default {
-  name: 'CrearUsuario',
+  name: 'EditarUsuarioAutenticado',
   data: () => ({
+    mostrarContraseña: false,
     botonCargando: false,
     respuestaServidor: null,
     alerta: false,
-    roles: [],
+    overlay: true,
     errores: [],
-    usuario: {
-      rol: null,
-      nombre: null,
-      apellidoPaterno: null,
-      apellidoMaterno: null,
-      celular: null,
-      correo: null,
-      carnet: null,
-      codigo: null
-    }
+    contraseña: null,
+    usuario: []
   }),
   created () {
-    this.obtenerRoles()
+    this.obtenerUsuario()
   },
   methods: {
-    obtenerRoles () {
-      this.$api({
-        method: 'get',
-        url: 'roles/obtener-roles',
-        headers: { Authorization: 'Bearer ' + localStorage.token }
-      }).then((response) => {
-        this.roles = response.data.roles
-      })
-    },
-    registrarUsuario () {
+    modificarUsuario () {
       this.botonCargando = true
       this.$api({
-        method: 'post',
-        url: 'usuarios/registrar-usuario',
+        method: 'put',
+        url: 'usuarios/modificar-usuario/' + this.usuario.id_usuario,
         headers: { Authorization: 'Bearer ' + localStorage.token },
-        data: {
-          id_rol: this.usuario.rol,
-          nombre_usuario: this.usuario.nombre,
-          apellido_paterno_usuario: this.usuario.apellidoPaterno,
-          apellido_materno_usuario: this.usuario.apellidoMaterno,
-          celular_usuario: this.usuario.celular,
-          correo_usuario: this.usuario.correo,
-          carnet_identidad_usuario: this.usuario.carnet,
-          codigo_usuario: this.usuario.codigo
-        }
+        data: this.generarDatos()
       })
         .then((response) => {
           this.botonCargando = false
           this.errores = []
-          this.reiniciarDatos(this.usuario)
           this.respuestaServidor = response.data.mensaje
           this.alerta = true
           this.$store.commit('recargarDatos')
@@ -225,23 +202,38 @@ export default {
           this.errores = error.response.data.errors
         })
     },
-    generarCodigo () {
-      if (this.usuario.nombre && this.usuario.apellidoPaterno && this.usuario.apellidoMaterno && this.usuario.carnet) {
-        this.usuario.codigo =
-        this.usuario.nombre.charAt(0) +
-        this.usuario.apellidoPaterno.charAt(0) +
-        this.usuario.apellidoMaterno.charAt(0) +
-        this.usuario.carnet
-      }
+    obtenerUsuario () {
+      this.$api({
+        method: 'get',
+        url: 'usuarios/obtener-usuario-autenticado',
+        headers: { Authorization: 'Bearer ' + localStorage.token }
+      }).then((response) => {
+        this.usuario = response.data.usuario
+        this.overlay = false
+      })
     },
-    reiniciarDatos (obj) {
-      for (const key in obj) {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this.reiniciarDatos(obj[key])
-        } else {
-          obj[key] = null
-        }
+    generarDatos () {
+      const datos = {
+        id_rol: this.usuario.id_rol,
+        nombre_usuario: this.usuario.nombre_usuario,
+        apellido_paterno_usuario: this.usuario.apellido_paterno_usuario,
+        apellido_materno_usuario: this.usuario.apellido_materno_usuario,
+        celular_usuario: this.usuario.celular_usuario,
+        correo_usuario: this.usuario.correo_usuario,
+        carnet_identidad_usuario: this.usuario.carnet_identidad_usuario,
+        codigo_usuario: this.usuario.codigo_usuario
       }
+      if (this.contraseña !== null) {
+        datos.contraseña_modificada = this.contraseña
+      }
+      return datos
+    },
+    generarCodigo () {
+      this.usuario.codigo_usuario =
+        this.usuario.nombre_usuario.charAt(0) +
+        this.usuario.apellido_paterno_usuario.charAt(0) +
+        this.usuario.apellido_materno_usuario.charAt(0) +
+        this.usuario.carnet_identidad_usuario
     }
   }
 }

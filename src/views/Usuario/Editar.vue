@@ -4,7 +4,7 @@
       <v-container class="elevation-4">
         <v-row>
           <v-col cols="12" lg="6">
-            <h3 class="text-center text-md-left"> Editar datos del usuario </h3>
+            <h3 style="word-break: normal" class="text-center text-md-left"> Editar datos del usuario </h3>
           </v-col>
         </v-row>
       </v-container>
@@ -28,7 +28,7 @@
               </li>
             </ul>
           </v-alert>
-          <v-row>
+          <v-row class="elevation-4 pa-3">
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.nombre_usuario"
@@ -39,7 +39,6 @@
                 @keyup="generarCodigo"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.apellido_paterno_usuario"
@@ -50,7 +49,6 @@
                 @keyup="generarCodigo"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.apellido_materno_usuario"
@@ -61,7 +59,6 @@
                 @keyup="generarCodigo"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.celular_usuario"
@@ -71,7 +68,6 @@
                 color="blue darken-4"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.correo_usuario"
@@ -81,7 +77,6 @@
                 color="blue darken-4"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-select
                 v-model="usuario.id_rol"
@@ -94,7 +89,6 @@
                 color="blue darken-4"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.carnet_identidad_usuario"
@@ -105,7 +99,6 @@
                 @keyup="generarCodigo"
               />
             </v-col>
-
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="usuario.codigo_usuario"
