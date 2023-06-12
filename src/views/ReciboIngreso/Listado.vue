@@ -152,7 +152,6 @@ export default {
       }).then((response) => {
         const { pagos } = response.data
         const { totalDia } = response.data
-        console.log(pagos)
         this.items = pagos
         this.totalDia = totalDia
         this.loading = false

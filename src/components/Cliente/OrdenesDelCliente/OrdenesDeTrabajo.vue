@@ -200,7 +200,6 @@ export default {
   }),
   created () {
     this.obtenerOrdenesDeCliente()
-    console.log(this.ordenesDeTrabajo)
   },
   methods: {
     registrarPagoOrdenDeTrabajo () {
@@ -249,7 +248,6 @@ export default {
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.ordenesDeTrabajo = response.data.ordenesDelCliente
-        console.log(this.ordenesDeTrabajo)
         this.deudaTotal = response.data.deudaTotal
         this.loading = false
         this.overlay = false

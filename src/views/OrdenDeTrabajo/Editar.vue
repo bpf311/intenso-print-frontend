@@ -461,7 +461,6 @@ export default {
       })
     },
     modificarOrdenDeTrabajo () {
-      console.log(this.generarDatos())
       this.botonCargando = true
       this.$api({
         method: 'put',

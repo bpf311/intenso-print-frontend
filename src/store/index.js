@@ -20,7 +20,6 @@ export default {
       return state.usuarioActual.nombre_completo
     },
     rolActual (state) {
-      console.log(state.rolUsuario.rol)
       return state.rolUsuario.rol
     },
     codigoUsuario (state) {
