@@ -1,123 +1,126 @@
 <template>
-  <v-card elevation="5" class="rounded-lg">
-    <v-card-title>
-      <v-container class="elevation-4">
-        <v-row>
-          <v-col cols="12" lg="6">
-            <h3 style="word-break: normal" class="text-center text-md-left"> Registrar nuevo cliente </h3>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="mt-5">
-        <v-container>
-          <v-alert
-            v-if="errores.length !== 0"
-            outlined
-            prominent
-            type="error"
-            elevation="2"
-            text
-            class="mb-8"
-          >
-            Por favor, corrija los siguientes errores
-            <ul id="example-1">
-              <li v-for="(item, index) in errores" :key="index">
-                {{ item[0] }}
-              </li>
-            </ul>
-          </v-alert>
-          <v-row class="elevation-4 pa-3">
-            <v-col cols="12">
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <v-card class="elevation-10">
+          <v-card-title>
+            <v-row>
+              <v-col cols="12" md="10">
+                <h3 style="word-break: normal" class="text-center text-md-left">
+                  Registrar nuevo cliente
+                </h3>
+              </v-col>
+              <v-col cols="12" md="2" class="text-center text-md-end">
+                <v-btn
+                  block
+                  color="error"
+                  :to="{ name: 'Listado de clientes' }"
+                >
+                  <v-icon left>mdi-arrow-left</v-icon>
+                  Atras
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-title>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card class="elevation-10">
+          <ValidationObserver v-slot="{ handleSubmit }" ref="obs">
+            <v-card-text>
+              <v-alert
+                v-if="validacionServidor"
+                outlined
+                prominent
+                type="error"
+                elevation="2"
+                text
+                class="mb-8"
+              >
+                Por favor, revise y corrija cualquier error identificado a continuación:
+                <ul>
+                  <li v-for="(item, index) in errores" :key="index">
+                    {{ item[0] }}
+                  </li>
+                </ul>
+              </v-alert>
               <v-row>
-                <v-col cols="12" md="4">
-                  <v-select
-                    v-model="selecciontipoCliente"
-                    outlined
-                    :items="tiposDeCliente"
-                    item-text="tipo_cliente"
-                    item-value="id_tipo_de_cliente"
-                    persistent-hint
-                    label="Tipo de cliente"
-                    prepend-icon="mdi-account-group"
-                    @change="reiniciarFormulario"
-                  />
+                <v-col cols="12">
+                  <v-row>
+                    <v-col cols="12" md="4">
+                      <ValidationProvider name="Tipo de cliente" rules="required" v-slot="{ errors }">
+                        <v-select
+                          v-model="selecciontipoCliente"
+                          outlined
+                          :items="tiposDeCliente"
+                          item-text="tipo_cliente"
+                          item-value="id_tipo_de_cliente"
+                          persistent-hint
+                          label="Tipo de cliente"
+                          prepend-icon="mdi-account-group"
+                          @change="reiniciarFormulario"
+                          :error-messages="obtenerValidaciones(errors, 'id_tipo_de_cliente')"
+                        />
+                      </ValidationProvider>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <ValidationProvider name="Número de teléfono/celular" rules="required|numeric|min:6" v-slot="{ errors }">
+                        <v-text-field
+                          v-model="cliente.telefono"
+                          label="Número de teléfono/celular"
+                          outlined
+                          prepend-icon="mdi-badge-account"
+                          color="blue darken-4"
+                          :error-messages="obtenerValidaciones(errors, 'cliente.telefono_cliente')"
+                        />
+                      </ValidationProvider>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <ValidationProvider name="Correo electrónico" rules="required" v-slot="{ errors }">
+                        <v-text-field
+                          v-model="cliente.correo"
+                          label="Correo electrónico"
+                          outlined
+                          prepend-icon="mdi-badge-account"
+                          color="blue darken-4"
+                          :error-messages="obtenerValidaciones(errors, 'cliente.correo_cliente')"
+                        />
+                      </ValidationProvider>
+                    </v-col>
+                  </v-row>
                 </v-col>
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="cliente.telefono"
-                    label="Numero de telefono"
-                    outlined
-                    prepend-icon="mdi-badge-account"
-                    color="blue darken-4"
-                  />
-                </v-col>
-                <v-col cols="12" md="4">
-                  <v-text-field
-                    v-model="cliente.correo"
-                    label="Direccion de correo"
-                    outlined
-                    prepend-icon="mdi-badge-account"
-                    color="blue darken-4"
-                  />
+                <v-col cols="12">
+                  <template v-if="selecciontipoCliente === 2">
+                    <registrar-cliente-personal
+                      :clientePersonal="clientePersonal"
+                      :obtenerValidaciones="obtenerValidaciones"
+                    />
+                  </template>
+                  <template v-if="selecciontipoCliente === 1">
+                    <registrar-cliente-empresarial
+                      :clienteEmpresarial="clienteEmpresarial"
+                      :obtenerValidaciones="obtenerValidaciones"
+                    />
+                  </template>
                 </v-col>
               </v-row>
-            </v-col>
-            <v-col cols="12">
-              <template v-if="selecciontipoCliente === 2">
-                <registrar-cliente-personal
-                  :clientePersonal="clientePersonal"
-                />
-              </template>
-              <template v-if="selecciontipoCliente === 1">
-                <registrar-cliente-empresarial
-                  :clienteEmpresarial="clienteEmpresarial"
-                />
-              </template>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-form>
-    </v-card-text>
-    <v-card-actions class="mb-2 mr-2">
-      <v-spacer />
-      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de clientes' }">
-        Atras
-      </v-btn>
-      <v-btn
-        color="green" class="white--text"
-        :loading="botonCargando"
-        @click="registrarCliente"
-      >
-        Registrar
-      </v-btn>
-    </v-card-actions>
-    <v-snackbar
-      v-model="alerta"
-      :timeout="4000"
-      color="success"
-      app
-      top
-      right
-    >
-      <v-row align="center" justify="center">
-        <v-col cols="2">
-          <v-icon
-            large
-            color="white"
-          >
-            mdi-check-circle-outline
-          </v-icon>
-        </v-col>
-        <v-col cols="10" align-self="center">
-          <p class="text-center font-weight-black my-auto">
-            {{ respuestaServidor }}
-          </p>
-        </v-col>
-      </v-row>
-    </v-snackbar>
-  </v-card>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                :loading="botonCargando"
+                color="green"
+                class="white--text"
+                @click="handleSubmit(registrarCliente)"
+              >
+                Registrar
+              </v-btn>
+            </v-card-actions>
+          </ValidationObserver>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -150,7 +153,7 @@ export default {
     errores: [],
     botonCargando: false,
     respuestaServidor: null,
-    alerta: false
+    validacionServidor: false
   }),
   created () {
     this.obtenerTiposDeCliente()
@@ -169,21 +172,22 @@ export default {
       this.botonCargando = true
       this.$api({
         method: 'post',
-        url: 'clientes/registrar-cliente',
+        url: 'clientes/registrar-cliente/0',
         headers: { Authorization: 'Bearer ' + localStorage.token },
         data: this.generarDatos()
       })
         .then((response) => {
-          this.botonCargando = false
           this.errores = []
-          this.respuestaServidor = response.data.mensaje
           this.reiniciarFormulario()
-          this.alerta = true
+          this.respuestaServidor = response.data.mensaje
           this.$store.commit('recargarDatos')
         })
         .catch((error) => {
-          this.botonCargando = false
+          this.validacionServidor = true
           this.errores = error.response.data.errors
+        }).finally(() => {
+          this.botonCargando = false
+          this.activarNotificacion()
         })
     },
     generarDatos () {
@@ -217,6 +221,7 @@ export default {
 
     reiniciarFormulario () {
       this.reiniciarDatos(this.cliente)
+      this.$refs.obs.reset()
       this.selecciontipoCliente === 1
         ? this.reiniciarDatos(this.clienteEmpresarial)
         : this.reiniciarDatos(this.clientePersonal)
@@ -230,6 +235,21 @@ export default {
           obj[key] = null
         }
       }
+    },
+    activarNotificacion () {
+      if (Object.keys(this.errores).length > 0) {
+        const mensaje = 'No se pudo completar la acción, por favor verifique los errores.'
+        this.$toast.error(mensaje)
+      } else {
+        this.validacionServidor = false
+        this.$refs.obs.reset()
+        this.$toast.success(this.respuestaServidor)
+      }
+    },
+    obtenerValidaciones (errors, field) {
+      const veeErrors = errors || []
+      const serverErrors = this.errores[field] || []
+      return [...veeErrors, ...serverErrors]
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-app style="background-color: #d9dddd">
+  <v-app style="background-color: #EAEDEF">
     <template v-if="usuarioActivo">
       <aplicacion />
     </template>

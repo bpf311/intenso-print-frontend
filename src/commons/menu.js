@@ -14,19 +14,19 @@ const menu = [
         icon: 'mdi-view-dashboard',
         to: { name: 'Ordenes de trabajo' },
         id: 2
-      }
-      /* {
+      },
+      {
         title: 'Ordenes de servicio',
         icon: 'mdi-view-dashboard',
-        to: { name: 'Listado de ordenes de servicios' },
-        id: 3
+        to: { name: 'Ordenes de servicio' },
+        id: 7
       },
       {
         title: 'Ordenes de venta',
         icon: 'mdi-view-dashboard',
-        to: { name: 'Listado de ordenes de ventas' },
-        id: 4
-      } */
+        to: { name: 'Ordenes de venta' },
+        id: 11
+      }
     ]
   },
   {
@@ -37,7 +37,13 @@ const menu = [
         title: 'Ingresos',
         icon: 'mdi-cash-plus',
         to: { name: 'Recibos de ingreso' },
-        id: 5
+        id: 15
+      },
+      {
+        title: 'Ingresos',
+        icon: 'mdi-cash-plus',
+        to: { name: 'Recibos de ingreso' },
+        id: 16
       }
     ]
   },
@@ -45,37 +51,67 @@ const menu = [
     title: 'Gestion de usuarios',
     icon: 'mdi-account-group',
     to: { name: 'Usuarios' },
-    id: 6
+    id: 17
   },
   {
     title: 'Gestion de clientes',
     icon: 'mdi-briefcase-account',
     to: { name: 'Clientes' },
-    id: 7
+    id: 22
   },
   {
     title: 'Gestion de inventario',
     icon: 'mdi-warehouse',
     to: { name: 'Suministros' },
-    id: 8
+    id: 26
   },
   {
     title: 'Gestion de roles y permisos',
     icon: 'mdi-shield-account',
     to: { name: 'Roles' },
-    id: 9
+    id: 30
   },
-  /* {
-    title: 'Reportes',
-    icon: 'mdi-finance',
-    to: { name: 'Listado de clientes' },
-    id: 10
-  }, */
   {
     title: 'Gestion de proveedores',
     icon: 'mdi-store',
     to: { name: 'Proveedores' },
-    id: 11
+    id: 33
+  },
+  {
+    title: 'Reportes',
+    icon: 'mdi-finance',
+    children: [
+      {
+        title: 'Reporte de inventario',
+        icon: 'mdi-cash-plus',
+        to: { name: 'Reporte de inventario' },
+        id: 36
+      },
+      {
+        title: 'Reporte de ingresos',
+        icon: 'mdi-cash-plus',
+        to: { name: 'Reporte de inventario' },
+        id: 37
+      },
+      {
+        title: 'Reporte de egresos',
+        icon: 'mdi-cash-plus',
+        to: { name: 'Reporte de inventario' },
+        id: 38
+      },
+      {
+        title: 'Reporte de deudas pendientes',
+        icon: 'mdi-cash-plus',
+        to: { name: 'Reporte de inventario' },
+        id: 39
+      },
+      {
+        title: 'Log del sistema',
+        icon: 'mdi-cash-plus',
+        to: { name: 'Reporte de inventario' },
+        id: 40
+      }
+    ]
   }
 ]
 

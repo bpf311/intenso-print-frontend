@@ -1,89 +1,64 @@
 <template>
-  <v-card elevation="5" class="rounded-lg">
-    <v-card-title>
-      <v-container class="elevation-4">
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <v-card class="elevation-10">
+          <v-card-title>
+            <v-row>
+              <v-col cols="12" md="10">
+                <h3 style="word-break: normal" class="text-center text-md-left">
+                  Editar datos del cliente
+                </h3>
+              </v-col>
+              <v-col cols="12" md="2" class="text-center text-md-end">
+                <v-btn
+                  block
+                  color="error"
+                  :to="{ name: 'Listado de clientes' }"
+                >
+                  <v-icon left>mdi-arrow-left</v-icon>
+                  Atras
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-title>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
         <v-row>
-          <v-col cols="12" lg="6">
-            <h3 style="word-break: normal" class="text-center text-md-left"> Editar datos del cliente </h3>
+          <v-col cols="12" v-if="tipoCliente === 1">
+            <editar-cliente-empresarial
+              :cliente="cliente"
+              v-if="cliente"
+              :botonCargando="botonCargando"
+              :modificarCliente="modificarCliente"
+              :obtenerValidaciones="obtenerValidaciones"
+              :validacionServidor="validacionServidor"
+              :errores="errores"
+              ref="editarClienteEmpresarial"
+            />
+          </v-col>
+          <v-col cols="12" v-if="tipoCliente === 2">
+            <editar-cliente-personal
+              :cliente="cliente"
+              v-if="cliente"
+              :botonCargando="botonCargando"
+              :modificarCliente="modificarCliente"
+              :obtenerValidaciones="obtenerValidaciones"
+              :validacionServidor="validacionServidor"
+              :errores="errores"
+              ref="editarClientePersonal"
+            />
           </v-col>
         </v-row>
-      </v-container>
-    </v-card-title>
-    <v-card-text>
-      <v-form class="mt-5">
-        <v-container>
-          <v-alert
-            v-if="errores.length !== 0"
-            outlined
-            prominent
-            type="error"
-            elevation="2"
-            text
-            class="mb-8"
-          >
-            Por favor, corrija los siguientes errores
-            <ul id="example-1">
-              <li v-for="(item, index) in errores" :key="index">
-                {{ item[0] }}
-              </li>
-            </ul>
-          </v-alert>
-          <v-row class="pa-3">
-            <template v-if="tipoCliente === 1">
-              <editar-cliente-empresarial
-                :cliente="cliente"
-                v-if="cliente"
-              />
-            </template>
-            <template v-if="tipoCliente === 2">
-              <editar-cliente-personal
-                :cliente="cliente"
-                v-if="cliente"
-              />
-            </template>
-          </v-row>
-        </v-container>
-      </v-form>
-    </v-card-text>
-    <v-card-actions class="mb-2 mr-2">
-      <v-spacer />
-      <v-btn color="error" class="ml-2" :to="{ name: 'Listado de clientes' }">
-        Atras
-      </v-btn>
-      <v-btn :loading="botonCargando" color="success" class="mr-0" @click="modificarCliente()">
-        Modificar
-      </v-btn>
-    </v-card-actions>
+      </v-col>
+    </v-row>
     <v-overlay :value="overlay" absolute dark opacity="0.8" color="#212121">
       <v-progress-circular indeterminate :size="90" :width="8">
         Cargando
       </v-progress-circular>
     </v-overlay>
-    <v-snackbar
-      v-model="alerta"
-      :timeout="4000"
-      color="success"
-      app
-      top
-      right
-    >
-      <v-row align="center" justify="center">
-        <v-col cols="2">
-          <v-icon
-            large
-            color="white"
-          >
-            mdi-check-circle-outline
-          </v-icon>
-        </v-col>
-        <v-col cols="10" align-self="center">
-          <p class="text-center font-weight-black my-auto">
-            {{ respuestaServidor }}
-          </p>
-        </v-col>
-      </v-row>
-    </v-snackbar>
-  </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -96,10 +71,10 @@ export default {
     overlay: true,
     botonCargando: false,
     respuestaServidor: null,
-    alerta: false,
     tiposDeEmpresa: [],
-    errores: [],
-    cliente: null
+    errores: {},
+    cliente: null,
+    validacionServidor: false
   }),
   computed: {
     tipoCliente: function () {
@@ -132,15 +107,16 @@ export default {
         data: this.generarDatos()
       })
         .then((response) => {
-          this.botonCargando = false
           this.errores = []
           this.respuestaServidor = response.data.mensaje
-          this.alerta = true
           this.$store.commit('recargarDatos')
         })
         .catch((error) => {
-          this.botonCargando = false
+          this.validacionServidor = true
           this.errores = error.response.data.errors
+        }).finally(() => {
+          this.botonCargando = false
+          this.activarNotificacion()
         })
     },
 
@@ -173,6 +149,25 @@ export default {
         }
       }
       return datos
+    },
+    activarNotificacion () {
+      if (Object.keys(this.errores).length > 0) {
+        const mensaje = 'No se pudo completar la acción, por favor verifique los errores.'
+        this.$toast.error(mensaje)
+      } else {
+        this.validacionServidor = false
+        if (this.tipoCliente === 1) {
+          this.$refs.editarClienteEmpresarial.$refs.obs.reset()
+        } else {
+          this.$refs.editarClientePersonal.$refs.obs.reset()
+        }
+        this.$toast.success(this.respuestaServidor)
+      }
+    },
+    obtenerValidaciones (errors, field) {
+      const veeErrors = errors || []
+      const serverErrors = this.errores[field] || []
+      return [...veeErrors, ...serverErrors]
     }
   }
 }

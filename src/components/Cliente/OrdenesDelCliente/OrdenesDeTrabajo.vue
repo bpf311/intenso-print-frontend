@@ -1,9 +1,9 @@
 <template>
-  <v-card elevation="5" class="rounded-lg">
+  <v-card>
     <v-card-subtitle>
-      <v-container class="elevation-4">
-        <v-row class="mt-2">
-          <v-col cols="12" md="4">
+      <v-container>
+        <v-row>
+          <v-col cols="12" md="3">
             <v-select
               v-model="seleccionDeuda"
               outlined
@@ -17,13 +17,11 @@
             />
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="5">
-            <div class="elevation-4 me-4">
-              <v-card-subtitle>
-                <h3 class="black--text text-center">Deuda total:</h3>
-                <h2 class="mt-2 black--text text-center">{{ deudaTotal }} Bs</h2>
-              </v-card-subtitle>
-            </div>
+          <v-col cols="12" md="4">
+            <v-container class="elevation-5">
+                <h3 class="mb-3 black--text text-center">Deuda total:</h3>
+                <h2 class="black--text text-center">{{ deudaTotal }} Bs</h2>
+            </v-container>
           </v-col>
         </v-row>
       </v-container>
@@ -34,9 +32,16 @@
         :items="ordenesDeTrabajo"
         :loading="loading"
         loading-text="Cargando"
-        class="elevation-4"
         fixed-header
-        height="240px"
+        :height="dynamicTableHeight"
+        :footer-props="{
+                showCurrentPage: true,
+                showFirstLastPage: true,
+                firstIcon: 'mdi-arrow-collapse-left',
+                lastIcon: 'mdi-arrow-collapse-right',
+                prevIcon: 'mdi-minus',
+                nextIcon: 'mdi-plus'
+              }"
       >
         <template v-slot:[`item.estado`]="{ item }">
           <v-chip
@@ -175,7 +180,10 @@
 
 <script>
 import ordenesDeTrabajoClienteHeaders from '@/commons/tableHeaders/ordenesDeTrabajoCliente'
+import { tableMixin } from '@/commons/mixins/tableMixin'
+
 export default {
+  mixins: [tableMixin],
   name: 'OrdenesDeTrabajo',
   data: () => ({
     headers: ordenesDeTrabajoClienteHeaders,
@@ -256,14 +264,6 @@ export default {
     colorDeFondo (estado) {
       if (estado === 'Pago completo') return 'green'
       else if (estado === 'Faltan pagos') return 'red accent-4'
-    },
-    abrirVentanaModal (datos) {
-      this.ingreso = datos
-      this.ventanaModal = true
-    },
-    cerrarVentanModal () {
-      this.ventanaModal = false
-      this.ingreso = null
     },
     recargarTabla () {
       this.ordenesDeTrabajo = []

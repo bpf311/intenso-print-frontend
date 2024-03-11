@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="menu" app dark color="#171721">
-      <v-list>
+    <v-navigation-drawer v-model="menu" app dark color="#1A2035">
+      <v-list style="background-color: #1F283E">
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="text-h6">
@@ -17,7 +17,7 @@
           <v-list-item
             v-if="!item.children"
             :key="index"
-            color="indigo"
+            color="#7A95F5"
             class="my-2"
             :to="item.to"
           >
@@ -26,7 +26,7 @@
             </v-list-item-icon>
             <v-list-item-title v-text="item.title" />
           </v-list-item>
-          <v-list-group v-else :key="index" color="indigo" no-action sub-groups>
+          <v-list-group v-else :key="index" color="#7A95F5" no-action sub-groups>
             <template v-slot:activator>
               <v-list-item-icon class="icono">
                 <v-icon v-text="item.icon" />
@@ -51,7 +51,7 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar app color="#0C4085" dark>
       <v-app-bar-nav-icon @click.stop="menu = !menu" />
       <v-spacer />
       <v-avatar class="mr-1">
@@ -127,7 +127,7 @@ export default {
     cerrarSesion () {
       this.$api({
         method: 'get',
-        url: 'sesion/cerrar-sesion',
+        url: 'cerrar-sesion',
         headers: { Authorization: 'Bearer ' + localStorage.token }
       }).then((response) => {
         this.$store.commit('cerrarSesion')

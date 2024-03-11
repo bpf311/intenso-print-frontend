@@ -6,7 +6,6 @@
         :items="items"
         :loading="loading"
         loading-text="Cargando"
-        class="elevation-4"
         fixed-header
         height="240px"
       >

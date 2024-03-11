@@ -8,6 +8,7 @@ import ListadoDeUsuarios from '@/views/Usuario/Listado.vue'
 import CrearUsuario from '@/views/Usuario/Crear.vue'
 import EditarUsuario from '@/views/Usuario/Editar.vue'
 import UsuarioAutenticado from '@/views/Cuenta/Index.vue'
+import UsuarioDesactivado from '@/views/CuentaInactiva/Index.vue'
 import IndexCliente from '@/views/Cliente/Index.vue'
 import ListadoDeClientes from '@/views/Cliente/Listado.vue'
 import CrearCliente from '@/views/Cliente/Crear.vue'
@@ -35,6 +36,14 @@ import CrearProveedor from '@/views/Proveedor/Crear.vue'
 import EditarProveedor from '@/views/Proveedor/Editar.vue'
 import IndexReciboIngreso from '@/views/ReciboIngreso/Index.vue'
 import ListadoDeRecibosIngreso from '@/views/ReciboIngreso/Listado.vue'
+import IndexReporte from '@/views/Reporte/Index.vue'
+import ReporteInventario from '@/views/Reporte/ReporteInventario.vue'
+import IndexOrdenDeServicio from '@/views/OrdenDeServicio/Index.vue'
+import ListadoDeOrdenesDeServicio from '@/views/OrdenDeServicio/Listado.vue'
+import IndexOrdenDeVenta from '@/views/OrdenDeVenta/Index.vue'
+import ListadoDeOrdenesDeVenta from '@/views/OrdenDeVenta/Listado.vue'
+import CrearOrdenDeVenta from '@/views/OrdenDeVenta/Crear.vue'
+import EditarOrdenDeVenta from '@/views/OrdenDeVenta/Editar.vue'
 
 Vue.use(VueRouter)
 
@@ -51,11 +60,6 @@ const routes = [
       requiereIniciarSesion: true
     },
     children: [
-      /* {
-        path: "calendario",
-        name: "Calendario",
-        component: Calendario,
-      }, */
       {
         path: '/dashboard',
         name: 'Dashboard',
@@ -63,8 +67,13 @@ const routes = [
       },
       {
         name: 'Cuenta de usuario',
-        path: 'cuenta-usuario',
+        path: '/cuenta-usuario',
         component: UsuarioAutenticado
+      },
+      {
+        path: '/cuenta-desactivada',
+        name: 'Cuenta desactivada',
+        component: UsuarioDesactivado
       },
       {
         path: '/usuarios',
@@ -207,6 +216,62 @@ const routes = [
         ]
       },
       {
+        path: '/ordenes-de-servicio',
+        name: 'Ordenes de servicio',
+        component: IndexOrdenDeServicio,
+        redirect: { name: 'Listado de ordenes de servicio' },
+        children: [
+          {
+            name: 'Listado de ordenes de servicio',
+            path: 'listado-ordenes-de-servicio',
+            component: ListadoDeOrdenesDeServicio
+          },
+          {
+            name: 'Registrar orden de servicio',
+            path: 'registrar-orden-de-servicio',
+            component: CrearOrdenDeTrabajo
+          },
+          {
+            name: 'Editar orden de servicio',
+            path: 'editar-orden-de-servicio/:idOrden/:idOrdenDeTrabajo/:tipoCliente',
+            component: EditarOrdenDeTrabajo
+          },
+          {
+            name: 'Datos de orden de servicio',
+            path: 'datos-orden-de-servicio/:idOrden/:idOrdenDeTrabajo/:tipoCliente/:vistaAnterior',
+            component: DatosOrdenDeTrabajo
+          },
+          {
+            name: 'Registrar pago de orden de servicio',
+            path: 'registrar-pago-orden-de-servicio/:id/:idOrden',
+            component: CrearPagoOrdenDeTrabajo
+          }
+        ]
+      },
+      {
+        path: '/ordenes-de-venta',
+        name: 'Ordenes de venta',
+        component: IndexOrdenDeVenta,
+        redirect: { name: 'Listado de ordenes de venta' },
+        children: [
+          {
+            name: 'Listado de ordenes de venta',
+            path: 'listado-ordenes-de-venta',
+            component: ListadoDeOrdenesDeVenta
+          },
+          {
+            name: 'Registrar orden de venta',
+            path: 'registrar-orden-de-venta',
+            component: CrearOrdenDeVenta
+          },
+          {
+            name: 'Editar orden de venta',
+            path: 'editar-orden-de-venta/:idOrden/:idOrdenDeVenta/:tipoCliente',
+            component: EditarOrdenDeVenta
+          }
+        ]
+      },
+      {
         path: '/proveedores',
         name: 'Proveedores',
         component: IndexProveedor,
@@ -239,6 +304,18 @@ const routes = [
             name: 'Listado de recibos de ingreso',
             path: 'listado-recibos-de-ingreso',
             component: ListadoDeRecibosIngreso
+          }
+        ]
+      },
+      {
+        path: '/reportes',
+        name: 'Reportes',
+        component: IndexReporte,
+        children: [
+          {
+            name: 'Reporte de inventario',
+            path: 'reporte-inventario',
+            component: ReporteInventario
           }
         ]
       }

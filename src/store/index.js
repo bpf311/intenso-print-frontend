@@ -6,16 +6,9 @@ export default {
     rolUsuario: null,
     usuarioAutenticado: false,
     recargar: false,
-    pasoRegistroOrdenDeTrabajo: 1,
-    ordenDeTrabajo: {}
+    suministrosDesmarcados: []
   },
   getters: {
-    pasoActual (state) {
-      return state.pasoRegistroOrdenDeTrabajo
-    },
-    datosOrdenDeTrabajo (state) {
-      return state.ordenDeTrabajo
-    },
     nombreCompleto (state) {
       return state.usuarioActual.nombre_completo
     },
@@ -24,6 +17,15 @@ export default {
     },
     codigoUsuario (state) {
       return state.usuarioActual.codigo_usuario
+    },
+    permisosAsignados (state) {
+      return state.permisosUsuario
+    },
+    tienePermiso: (state) => (idPermiso) => {
+      return state.permisosUsuario.includes(idPermiso)
+    },
+    suministrosDesmarcados (state) {
+      return state.suministrosDesmarcados
     }
   },
   mutations: {
@@ -53,22 +55,25 @@ export default {
         state.usuarioAutenticado = true
       }
     },
-    pasoSiguiente (state) {
-      state.pasoRegistroOrdenDeTrabajo++
+    agregarSuministroDesmarcado (state, suministro) {
+      state.suministrosDesmarcados.push(suministro)
     },
-    pasoAnterior (state) {
-      state.pasoRegistroOrdenDeTrabajo--
+
+    quitarSuministroDesmarcado (state, suministro) {
+      state.suministrosDesmarcados = state.suministrosDesmarcados.filter(s => s !== suministro)
     },
-    asignarDatosOrdenDeTrabajo (state, datos) {
-      Object.keys(datos).forEach(function (key) {
-        state.ordenDeTrabajo[key] = datos[key]
-      })
-    },
-    reiniciarOrden (state) {
-      state.ordenDeTrabajo = {}
-      state.pasoRegistroOrdenDeTrabajo = 1
+
+    limpiarSuministrosDesmarcados (state) {
+      state.suministrosDesmarcados = []
     }
   },
-  actions: {},
+  actions: {
+    limpiarSuministrosSiEsNecesario ({ commit, state }, rutaActual) {
+      // Verificar si la ruta actual es diferente de la ruta donde se está modificando el array
+      if (rutaActual !== 'Editar orden de venta') {
+        commit('limpiarSuministrosDesmarcados')
+      }
+    }
+  },
   modules: {}
 }

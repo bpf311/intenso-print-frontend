@@ -1,19 +1,8 @@
 <template>
-  <v-card elevation="5" class="rounded-lg">
-    <v-card-title>
-      <v-container class="elevation-4">
-        <v-row>
-          <v-col cols="12" lg="6">
-            <h3 style="word-break: normal" class="text-center text-md-left">
-              Registrar nueva orden de trabajo
-            </h3>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card-title>
-    <v-card-text>
-      <v-form>
-        <v-container>
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <v-card class="elevation-10">
           <v-alert
             v-if="errores.length !== 0"
             outlined
@@ -30,204 +19,224 @@
               </li>
             </ul>
           </v-alert>
-          <v-row class="elevation-4 my-4">
-            <v-col cols="12" class="pa-4">
+          <v-card-title>
+            <v-row>
+              <v-col cols="12" md="10">
+                <h3 style="word-break: normal" class="text-center text-md-left">
+                  Registrar nueva orden de trabajo
+                </h3>
+              </v-col>
+              <v-col cols="12" md="2" class="text-center text-md-end">
+                <v-btn
+                  block
+                  color="error"
+                  :to="{ name: 'Listado de ordenes de trabajo' }"
+                >
+                  <v-icon left>mdi-arrow-left </v-icon>
+                  Atras
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-title>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card class="elevation-10">
+          <v-card-title>
+            <v-container class="elevation-4">
               <v-row>
                 <v-col cols="12">
-                  <v-container class="elevation-4">
-                    <v-row>
-                      <v-col cols="12">
-                        <h3 class="text-center black--text">Datos generales</h3>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-col>
-                <v-col cols="12" md="4">
-                  <v-select
-                    v-model="tipoDeClienteSeleccionado"
-                    label="Tipo de cliente"
-                    outlined
-                    prepend-icon="mdi-briefcase-account"
-                    :items="tiposDeCliente"
-                    item-text="tipo_cliente"
-                    item-value="id_tipo_de_cliente"
-                    color="blue darken-4"
-                    @change="obtenerClientes()"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-autocomplete
-                    v-model="clienteSeleccionado"
-                    :items="clientes"
-                    item-text="datos_unidos"
-                    item-value="id_cliente"
-                    prepend-icon="mdi-card-account-details"
-                    outlined
-                    :loading="loading"
-                    :disabled="inactivo"
-                    label="Cliente"
-                    hint="Seleccione al cliente"
-                    persistent-hint
-                    clearable
-                  />
-                </v-col>
-                <v-col cols="12" md="2">
-                  <v-btn
-                    color="green"
-                    block
-                    class="white--text"
-                    :to="{ name: 'Registrar cliente' }"
-                  >
-                    Nuevo cliente
-                  </v-btn>
-                </v-col>
-                <v-col cols="12">
-                  <v-textarea
-                    v-model="ordenDeTrabajo.descripcion"
-                    label="Descripcion del pedido"
-                    outlined
-                    prepend-icon="mdi-clipboard-list"
-                    color="blue darken-4"
-                  />
+                  <h4 class="text-center">Datos generales</h4>
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
-          <v-row class="elevation-4 my-4">
-            <v-col cols="12" class="pa-4">
+            </v-container>
+          </v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" md="4">
+                <v-select
+                  v-model="tipoDeClienteSeleccionado"
+                  label="Tipo de cliente"
+                  outlined
+                  prepend-icon="mdi-briefcase-account"
+                  :items="tiposDeCliente"
+                  item-text="tipo_cliente"
+                  item-value="id_tipo_de_cliente"
+                  color="blue darken-4"
+                  @change="obtenerClientes()"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-autocomplete
+                  v-model="clienteSeleccionado"
+                  :items="clientes"
+                  item-text="datos_unidos"
+                  item-value="id_cliente"
+                  prepend-icon="mdi-card-account-details"
+                  outlined
+                  :loading="loading"
+                  :disabled="inactivo"
+                  label="Cliente"
+                  hint="Seleccione al cliente"
+                  persistent-hint
+                  clearable
+                />
+              </v-col>
+              <v-col cols="12" md="2">
+                <v-btn
+                  color="green"
+                  block
+                  class="white--text"
+                  :to="{ name: 'Registrar cliente' }"
+                >
+                  Nuevo cliente
+                </v-btn>
+              </v-col>
+              <v-col cols="12">
+                <v-textarea
+                  v-model="ordenDeTrabajo.descripcion"
+                  label="Descripcion del pedido"
+                  outlined
+                  prepend-icon="mdi-clipboard-list"
+                  color="blue darken-4"
+                />
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card class="elevation-10">
+          <v-card-title>
+            <v-container class="elevation-4">
               <v-row>
                 <v-col cols="12">
-                  <v-container class="elevation-4">
-                    <v-row>
-                      <v-col cols="12">
-                        <h3 class="text-center black--text">
-                          Asignar suministros
-                        </h3>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-col>
-                <v-col cols="12">
-                  <v-data-table
-                    :headers="[
-                      { text: 'Suministro', value: 'descripcion_suministro' },
-                      { text: 'Stock', value: 'saldo_suministro' },
-                      {
-                        text: 'Precio unitario',
-                        value: 'precio_unitario_suministro',
-                        width: '20%',
-                      },
-                      { text: 'Cantidad', value: 'cantidad', width: '20%' },
-                      {
-                        text: 'Subtotal',
-                        value: 'subtotal',
-                        sortable: false,
-                        width: '30%',
-                      },
-                    ]"
-                    :items="items"
-                    item-key="id_suministro"
-                    class="elevation-4"
-                  >
-                    <template
-                      v-slot:[`item.precio_unitario_suministro`]="{ item }"
-                    >
-                      <v-text-field
-                        v-model="item.precio_unitario_suministro"
-                        outlined
-                        dense
-                        type="number"
-                        class="my-text-field"
-                        color="blue darken-4"
-                        suffix="Bs"
-                        @input="calcularSubtotal(item)"
-                      />
-                    </template>
-                    <template v-slot:[`item.cantidad`]="{ item }">
-                      <v-text-field
-                        v-model="item.cantidad"
-                        outlined
-                        dense
-                        type="number"
-                        min="1"
-                        class="my-text-field"
-                        color="blue darken-4"
-                        @input="calcularSubtotal(item)"
-                      />
-                    </template>
-                    <template v-slot:[`item.subtotal`]="{ item }">
-                      <p v-if="item.cantidad">
-                        {{
-                          (
-                            item.precio_unitario_suministro * item.cantidad
-                          ).toFixed(2)
-                        }}
-                        Bs
-                      </p>
-                    </template>
-                  </v-data-table>
+                  <h4 class="text-center">Asignar suministros</h4>
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
-          <v-row class="elevation-4 my-4">
-            <v-col cols="12" class="pa-4">
+            </v-container>
+          </v-card-title>
+          <v-card-text>
+            <v-data-table
+              :headers="[
+                {
+                  text: 'Suministro',
+                  value: 'descripcion_suministro',
+                  class: 'blue-grey lighten-4 black--text text--darken-2 font-weight-bold'
+                },
+                {
+                  text: 'Stock',
+                  value: 'saldo_suministro',
+                  class: 'blue-grey lighten-4 black--text text--darken-2 font-weight-bold'
+                },
+                {
+                  text: 'Precio unitario',
+                  value: 'precio_unitario_suministro',
+                  width: '20%',
+                  class: 'blue-grey lighten-4 black--text text--darken-2 font-weight-bold'
+                },
+                {
+                  text: 'Cantidad',
+                  value: 'cantidad',
+                  width: '20%',
+                  class: 'blue-grey lighten-4 black--text text--darken-2 font-weight-bold'
+                },
+                {
+                  text: 'Subtotal',
+                  value: 'subtotal',
+                  sortable: false,
+                  width: '30%',
+                  class: 'blue-grey lighten-4 black--text text--darken-2 font-weight-bold'
+                },
+              ]"
+              :items="items"
+              item-key="id_suministro"
+            >
+              <template v-slot:[`item.precio_unitario_suministro`]="{ item }">
+                <v-text-field
+                  v-model="item.precio_unitario_suministro"
+                  outlined
+                  dense
+                  type="number"
+                  class="my-text-field"
+                  color="blue darken-4"
+                  suffix="Bs"
+                  @input="calcularSubtotal(item)"
+                />
+              </template>
+              <template v-slot:[`item.cantidad`]="{ item }">
+                <v-text-field
+                  v-model="item.cantidad"
+                  outlined
+                  dense
+                  type="number"
+                  min="1"
+                  class="my-text-field"
+                  color="blue darken-4"
+                  @input="calcularSubtotal(item)"
+                />
+              </template>
+              <template v-slot:[`item.subtotal`]="{ item }">
+                <p v-if="item.cantidad">
+                  {{
+                    (item.precio_unitario_suministro * item.cantidad).toFixed(2)
+                  }}
+                  Bs
+                </p>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card class="elevation-10">
+          <v-card-title>
+            <v-container class="elevation-4">
               <v-row>
                 <v-col cols="12">
-                  <v-container class="elevation-4">
-                    <v-row>
-                      <v-col cols="12">
-                        <h3 class="text-center black--text">
-                          Confirmar precio
-                        </h3>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="ordenDeTrabajo.precioTotal"
-                    label="Precio total"
-                    outlined
-                    prepend-icon="mdi-cash-multiple"
-                    color="blue darken-4"
-                    suffix="Bs"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="ordenDeTrabajo.montoCancelado"
-                    label="Monto cancelado"
-                    outlined
-                    prepend-icon="mdi-account-cash"
-                    color="blue darken-4"
-                    suffix="Bs"
-                  />
+                  <h4 class="text-center">Confirmar precio</h4>
                 </v-col>
               </v-row>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-form>
-    </v-card-text>
-    <v-card-actions class="mb-2 mr-2">
-      <v-spacer />
-      <v-btn
-        color="error"
-        class="ml-2"
-        :to="{ name: 'Listado de ordenes de trabajo' }"
-      >
-        Atras
-      </v-btn>
-      <v-btn
-        :loading="botonCargando"
-        color="green"
-        class="white--text"
-        @click="registrarOrdenDeTrabajo()"
-      >
-        Registrar
-      </v-btn>
-    </v-card-actions>
+            </v-container>
+          </v-card-title>
+          <v-card-text class="mt-5">
+            <v-row class="d-flex justify-space-around">
+              <v-col cols="12" md="5">
+                <v-text-field
+                  v-model="ordenDeTrabajo.precioTotal"
+                  label="Precio total"
+                  outlined
+                  prepend-icon="mdi-cash-multiple"
+                  color="blue darken-4"
+                  suffix="Bs"
+                />
+              </v-col>
+              <v-col cols="12" md="5">
+                <v-text-field
+                  v-model="ordenDeTrabajo.montoCancelado"
+                  label="Monto cancelado"
+                  outlined
+                  prepend-icon="mdi-account-cash"
+                  color="blue darken-4"
+                  suffix="Bs"
+                />
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions class="mb-2 mr-2">
+            <v-spacer />
+            <v-btn
+              :loading="botonCargando"
+              color="green"
+              class="white--text"
+              @click="registrarOrdenDeTrabajo()"
+            >
+              Registrar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-snackbar v-model="alerta" :timeout="4000" color="success" app top right>
       <v-row align="center" justify="center">
         <v-col cols="2">
@@ -240,7 +249,7 @@
         </v-col>
       </v-row>
     </v-snackbar>
-  </v-card>
+  </v-container>
 </template>
 <style>
 .my-text-field .v-text-field__details {
