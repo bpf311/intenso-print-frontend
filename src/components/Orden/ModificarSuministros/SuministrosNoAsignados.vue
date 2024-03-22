@@ -1,5 +1,20 @@
 <template>
   <v-card class="elevation-10">
+    <v-card-subtitle v-if="alerta">
+      <v-alert
+        outlined
+        prominent
+        type="error"
+        elevation="2"
+        text
+        class="mb-2"
+        dismissible
+        border="bottom"
+      >
+        El precio y/o la cantidad asignada a cada suministro seleccionado no
+        puede ser igual a cero.
+      </v-alert>
+    </v-card-subtitle>
     <v-card-subtitle>
       <v-row>
         <v-col cols="12" lg="3">
@@ -32,17 +47,6 @@
       </v-row>
     </v-card-subtitle>
     <v-card-text>
-      <v-alert
-        v-if="error"
-        outlined
-        prominent
-        text
-        type="error"
-        border="bottom"
-        dismissible
-      >
-        {{ mensajeError }}
-      </v-alert>
       <v-data-table
         :headers="headers"
         v-model="suministrosSeleccionados"
@@ -83,7 +87,10 @@
         <template v-slot:[`item.subtotal`]="{ item }">
           <p v-if="item.cantidad_prevista_suministro">
             {{
-              (item.precio_unitario_suministro * item.cantidad_prevista_suministro).toFixed(2)
+              (
+                item.precio_unitario_suministro *
+                item.cantidad_prevista_suministro
+              ).toFixed(2)
             }}
             Bs
           </p>
@@ -98,12 +105,11 @@
 }
 </style>
 <script>
-import seleccionSuministro from '@/commons/tableHeaders/seleccionSuministro'
+import seleccionSuministro from "@/commons/tableHeaders/seleccionSuministro";
 export default {
-  name: 'SeleccionarSuministros',
+  name: "SeleccionarSuministros",
   props: {
-    alerta: Boolean,
-    limpiarDatos: Boolean
+    limpiarDatos: Boolean,
   },
   data: () => ({
     headers: seleccionSuministro,
@@ -118,108 +124,121 @@ export default {
     suministrosSeleccionados: [],
     error: false,
     mensajeError: null,
-    cambiarSuministros: false
+    cambiarSuministros: false,
+    alerta: false,
   }),
-  created () {
-    this.obtenerTiposDeSuministros()
-    this.obtenerSuministros()
+  created() {
+    this.obtenerTiposDeSuministros();
+    this.obtenerSuministros();
   },
   watch: {
     suministrosSeleccionados: {
-      handler: function (nuevoValor, valorAnterior) {
-        const validacion = nuevoValor.every(objeto => {
-          return 'cantidad_prevista_suministro' in objeto && objeto.cantidad_prevista_suministro !== '' && objeto.cantidad_prevista_suministro > 0 && objeto.cantidad_prevista_suministro !== null
-        })
+      handler: function (nuevoValor) {
+        const validacion = nuevoValor.every((objeto) => {
+          return (
+            objeto.cantidad_prevista_suministro !== "0" &&
+            objeto.precio_unitario_suministro !== "0"
+          );
+        });
         if (!validacion) {
-          this.mensajeError = 'Debe asignar una cantidad a todos los suministros seleccionados.'
-          this.error = true
-          this.cambiarSuministros = true
+          this.alerta = true;
+          this.cambiarSuministros = true;
         } else {
-          this.cambiarSuministros = false
-          this.error = false
-          this.calcularTotal()
+          this.alerta = false;
+          this.cambiarSuministros = false;
+          this.calcularTotal();
         }
       },
-      deep: true
+      deep: true,
     },
-    limpiarDatos (nuevoValor, valorAnterior) {
+    limpiarDatos(nuevoValor, valorAnterior) {
       if (nuevoValor) {
-        this.suministrosSeleccionados = []
-        this.obtenerSuministros()
-        this.$emit('reiniciar-variable')
+        this.suministrosSeleccionados = [];
+        this.obtenerSuministros();
+        this.$emit("reiniciar-variable");
       }
-    }
+    },
   },
   methods: {
-    verificarSeleccion (seleccionado) {
+    verificarSeleccion(seleccionado) {
       if (!seleccionado.value) {
-        const suministro = seleccionado.item
-        const index = this.suministros.findIndex(objeto => objeto.id_suministro === suministro.id_suministro)
+        const suministro = seleccionado.item;
+        const index = this.suministros.findIndex(
+          (objeto) => objeto.id_suministro === suministro.id_suministro
+        );
         if (index !== -1) {
-          const suministroEncontrado = this.suministros[index]
-          delete suministroEncontrado.cantidad_prevista_suministro
-          delete suministroEncontrado.subtotal
-          delete this.subtotales[suministroEncontrado.id_suministro]
+          const suministroEncontrado = this.suministros[index];
+          delete suministroEncontrado.cantidad_prevista_suministro;
+          delete suministroEncontrado.subtotal;
+          delete this.subtotales[suministroEncontrado.id_suministro];
         }
       }
     },
-    obtenerTiposDeSuministros () {
+    obtenerTiposDeSuministros() {
       this.$api({
-        method: 'get',
-        url: 'tipos-de-suministros/obtener-tipos-de-suministros',
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "get",
+        url: "tipos-de-suministros/obtener-tipos-de-suministros",
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        this.tiposDeSuministros = response.data.tiposDeSuministros
-        this.loadingSelect = false
-      })
+        this.tiposDeSuministros = response.data.tiposDeSuministros;
+        this.loadingSelect = false;
+      });
     },
-    obtenerSuministros () {
+    obtenerSuministros() {
       this.$api({
-        method: 'get',
-        url: 'suministros/obtener-suministros-no-asignados/' +
+        method: "get",
+        url:
+          "suministros/obtener-suministros-no-asignados/" +
           this.seleccionTipoSuministro +
-          '/' + this.$route.params.idOrden,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+          "/" +
+          this.$route.params.idOrden,
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        const { suministrosNoAsignados } = response.data
-        this.suministros = suministrosNoAsignados
+        const { suministrosNoAsignados } = response.data;
+        this.suministros = suministrosNoAsignados;
         if (this.suministrosSeleccionados.length > 0) {
           // Crear un diccionario de suministrosSeleccionados indexado por id_suministro
-          const suministrosSeleccionadosDict = {}
-          this.suministrosSeleccionados.forEach(obj => {
-            suministrosSeleccionadosDict[obj.id_suministro] = obj
-          })
+          const suministrosSeleccionadosDict = {};
+          this.suministrosSeleccionados.forEach((obj) => {
+            suministrosSeleccionadosDict[obj.id_suministro] = obj;
+          });
           // Reemplazar los suministros en el array1 si existen en el array2
           this.suministros.forEach((suministro, index) => {
-            const obj2 = suministrosSeleccionadosDict[suministro.id_suministro]
+            const obj2 = suministrosSeleccionadosDict[suministro.id_suministro];
             if (obj2) {
-              this.suministros[index] = obj2
+              this.suministros[index] = obj2;
             }
-          })
+          });
         }
-        this.loading = false
-      })
+        this.loading = false;
+      });
     },
-    calcularSubtotal (item) {
-      const id = item.id_suministro
+    calcularSubtotal(item) {
+      const id = item.id_suministro;
       if (item.cantidad_prevista_suministro) {
-        item.subtotal = item.cantidad_prevista_suministro * item.precio_unitario_suministro
-        this.subtotales[id] = item.subtotal
+        item.subtotal =
+          item.cantidad_prevista_suministro * item.precio_unitario_suministro;
+        this.subtotales[id] = item.subtotal;
       }
       if (!item.cantidad_prevista_suministro) {
-        delete this.subtotales[id]
+        delete this.subtotales[id];
       }
     },
-    calcularTotal () {
-      const total = Object.values(this.subtotales).reduce((a, b) => a + b, 0)
-      this.$emit('establecer-suministros', this.suministrosSeleccionados, total.toFixed(2), 'Nuevos suministros')
+    calcularTotal() {
+      const total = Object.values(this.subtotales).reduce((a, b) => a + b, 0);
+      this.$emit(
+        "establecer-suministros",
+        this.suministrosSeleccionados,
+        total.toFixed(2),
+        "Nuevos suministros"
+      );
     },
-    recargarTabla () {
-      this.suministros = []
-      this.loading = true
-      this.busqueda = null
-      this.obtenerSuministros()
-    }
-  }
-}
+    recargarTabla() {
+      this.suministros = [];
+      this.loading = true;
+      this.busqueda = null;
+      this.obtenerSuministros();
+    },
+  },
+};
 </script>

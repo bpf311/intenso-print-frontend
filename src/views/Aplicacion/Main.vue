@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer v-model="menu" app dark color="#1A2035">
-      <v-list style="background-color: #1F283E">
+      <v-list style="background-color: #1f283e">
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="text-h6">
@@ -22,16 +22,22 @@
             :to="item.to"
           >
             <v-list-item-icon class="icono">
-              <v-icon v-text="item.icon" />
+              <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title> {{ item.title }} </v-list-item-title>
           </v-list-item>
-          <v-list-group v-else :key="index" color="#7A95F5" no-action sub-groups>
+          <v-list-group
+            v-else
+            :key="index"
+            color="#7A95F5"
+            no-action
+            sub-groups
+          >
             <template v-slot:activator>
               <v-list-item-icon class="icono">
-                <v-icon v-text="item.icon" />
+                <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-icon>
-              <v-list-item-title v-text="item.title" />
+              <v-list-item-title> {{ item.title }} </v-list-item-title>
             </template>
             <template>
               <v-list-item
@@ -41,9 +47,9 @@
                 link
                 class="subitem my-2"
               >
-                <v-list-item-title v-text="subItem.title" />
+                <v-list-item-title> {{ subItem.title }} </v-list-item-title>
                 <v-list-item-icon>
-                  <v-icon v-text="subItem.icon" />
+                  <v-icon>{{ subItem.icon }}</v-icon>
                 </v-list-item-icon>
               </v-list-item>
             </template>
@@ -66,7 +72,10 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item class="opcionesUsuario" :to="{ name: 'Cuenta de usuario' }">
+            <v-list-item
+              class="opcionesUsuario"
+              :to="{ name: 'Cuenta de usuario' }"
+            >
               <v-list-item-icon>
                 <v-icon>mdi-account</v-icon>
               </v-list-item-icon>
@@ -104,36 +113,36 @@
 }
 </style>
 <script>
-import sesion from '../../services/sesion'
+import sesion from "../../services/sesion";
 export default {
-  data () {
+  data() {
     return {
       menu: true,
-      itemsMenu: sesion.obtenerMenu()
-    }
+      itemsMenu: sesion.obtenerMenu(),
+    };
   },
   computed: {
-    usuario () {
-      return this.$store.getters.nombreCompleto
+    usuario() {
+      return this.$store.getters.nombreCompleto;
     },
-    rolUsuario () {
-      return this.$store.getters.rolActual
+    rolUsuario() {
+      return this.$store.getters.rolActual;
     },
-    codigoUsuario () {
-      return this.$store.getters.codigoUsuario
-    }
+    codigoUsuario() {
+      return this.$store.getters.codigoUsuario;
+    },
   },
   methods: {
-    cerrarSesion () {
+    cerrarSesion() {
       this.$api({
-        method: 'get',
-        url: 'cerrar-sesion',
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "get",
+        url: "cerrar-sesion",
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        this.$store.commit('cerrarSesion')
-        this.$router.replace({ name: 'Inicio de sesion' })
-      })
-    }
-  }
-}
+        this.$store.commit("cerrarSesion");
+        this.$router.replace({ name: "Inicio de sesion" });
+      });
+    },
+  },
+};
 </script>

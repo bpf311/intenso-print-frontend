@@ -147,7 +147,7 @@
                 firstIcon: 'mdi-arrow-collapse-left',
                 lastIcon: 'mdi-arrow-collapse-right',
                 prevIcon: 'mdi-minus',
-                nextIcon: 'mdi-plus'
+                nextIcon: 'mdi-plus',
               }"
             >
               <template v-slot:[`item.opciones`]="row">
@@ -240,7 +240,10 @@
         <v-divider></v-divider>
         <v-card-text class="mt-5">
           <p class="text-justify black--text">
-            Si la Orden de Venta se concluye, no se podrán efectuar cambios posteriores y los suministros asignados a esta orden se restarán del inventario. No obstante, aún podrá registrar pagos en caso de existir un saldo pendiente.
+            Si la Orden de Venta se concluye, no se podrán efectuar cambios
+            posteriores y los suministros asignados a esta orden se restarán del
+            inventario. No obstante, aún podrá registrar pagos en caso de
+            existir un saldo pendiente.
           </p>
         </v-card-text>
         <v-divider></v-divider>
@@ -260,28 +263,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-snackbar v-model="alerta" :timeout="4000" color="success" app top right>
-      <v-row align="center" justify="center">
-        <v-col cols="2">
-          <v-icon large color="white"> mdi-check-circle-outline </v-icon>
-        </v-col>
-        <v-col cols="10" align-self="center">
-          <p class="text-center font-weight-black my-auto">
-            {{ respuestaServidor }}
-          </p>
-        </v-col>
-      </v-row>
-    </v-snackbar>
   </v-container>
 </template>
 <script>
-import ordenDeVentaHeaders from '@/commons/tableHeaders/ordenDeVenta'
-import { tableMixin } from '@/commons/mixins/tableMixin'
-import { DateTime } from 'luxon'
+import ordenDeVentaHeaders from "@/commons/tableHeaders/ordenDeVenta";
+import { tableMixin } from "@/commons/mixins/tableMixin";
+import { DateTime } from "luxon";
 
 export default {
   mixins: [tableMixin],
-  name: 'ListadoDeOrdenesDeVenta',
+  name: "ListadoDeOrdenesDeVenta",
   data: () => ({
     ventanaConfirmacion: false,
     headers: ordenDeVentaHeaders,
@@ -302,96 +293,119 @@ export default {
     fechaInicio: null,
     fechaFin: null,
     rangoDeFechas: [
-      { id: 1, rango: 'Mes actual' },
-      { id: 2, rango: 'Mes anterior' },
-      { id: 3, rango: 'Intervalo personalizado' }
+      { id: 1, rango: "Mes actual" },
+      { id: 2, rango: "Mes anterior" },
+      { id: 3, rango: "Intervalo personalizado" },
     ],
     roles: [],
     estados: [
-      { id: 1, estado: 'Finalizados' },
-      { id: 0, estado: 'Pendientes' }
+      { id: 1, estado: "Finalizados" },
+      { id: 0, estado: "Pendientes" },
     ],
     idOrden: null,
-    dynamicTableHeight: 0
+    dynamicTableHeight: 0,
+    errores: null,
   }),
-  activated () {
+  activated() {
     if (this.$store.state.recargar) {
-      this.recargarTabla()
-      this.$store.commit('noRecargarDatos')
+      this.recargarTabla();
+      this.$store.commit("noRecargarDatos");
     }
   },
-  created () {
-    this.obtenerOrdenesDeVenta()
+  created() {
+    this.obtenerOrdenesDeVenta();
   },
   methods: {
-    obtenerFechas () {
-      const fechaActual = DateTime.now()
+    obtenerFechas() {
+      const fechaActual = DateTime.now();
 
-      const primerDiaMesAnterior = fechaActual.minus({ months: 1 }).startOf('month')
-      const ultimoDiaMesAnterior = fechaActual.minus({ months: 1 }).endOf('month')
+      const primerDiaMesAnterior = fechaActual
+        .minus({ months: 1 })
+        .startOf("month");
+      const ultimoDiaMesAnterior = fechaActual
+        .minus({ months: 1 })
+        .endOf("month");
 
-      const primerDiaMesActual = fechaActual.startOf('month')
-      const ultimoDiaMesActual = fechaActual.endOf('month')
+      const primerDiaMesActual = fechaActual.startOf("month");
+      const ultimoDiaMesActual = fechaActual.endOf("month");
 
       if (this.seleccionRangoDeFechas === 1) {
-        this.fechaInicio = primerDiaMesActual.toISODate()
-        this.fechaFin = ultimoDiaMesActual.toISODate()
+        this.fechaInicio = primerDiaMesActual.toISODate();
+        this.fechaFin = ultimoDiaMesActual.toISODate();
       } else if (this.seleccionRangoDeFechas === 2) {
-        this.fechaInicio = primerDiaMesAnterior.toISODate()
-        this.fechaFin = ultimoDiaMesAnterior.toISODate()
+        this.fechaInicio = primerDiaMesAnterior.toISODate();
+        this.fechaFin = ultimoDiaMesAnterior.toISODate();
       } else if (this.seleccionRangoDeFechas === 3) {
-        if (this.seleccionFechaInicio !== null && this.seleccionFechaFin !== null) {
-          this.fechaInicio = this.seleccionFechaInicio
-          this.fechaFin = this.seleccionFechaFin
+        if (
+          this.seleccionFechaInicio !== null &&
+          this.seleccionFechaFin !== null
+        ) {
+          this.fechaInicio = this.seleccionFechaInicio;
+          this.fechaFin = this.seleccionFechaFin;
         }
       }
     },
-    abrirVentanaConfirmacion (id) {
-      this.ventanaConfirmacion = true
-      this.idOrden = id
+    abrirVentanaConfirmacion(id) {
+      this.ventanaConfirmacion = true;
+      this.idOrden = id;
     },
-    cerrarVentanaConfirmacion () {
-      this.ventanaConfirmacion = false
-      this.idOrden = null
+    cerrarVentanaConfirmacion() {
+      this.ventanaConfirmacion = false;
+      this.idOrden = null;
     },
-    obtenerOrdenesDeVenta () {
-      this.obtenerFechas()
+    obtenerOrdenesDeVenta() {
+      this.obtenerFechas();
       this.$api({
-        method: 'get',
+        method: "get",
         url:
-          'ordenes-de-venta/obtener-ordenes-de-venta/' +
-          this.seleccionEstado + '/' + this.fechaInicio + '/' + this.fechaFin,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+          "ordenes-de-venta/obtener-ordenes-de-venta/" +
+          this.seleccionEstado +
+          "/" +
+          this.fechaInicio +
+          "/" +
+          this.fechaFin,
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        const { ordenesDeVenta } = response.data
-        this.items = ordenesDeVenta
-        this.loading = false
-      })
+        const { ordenesDeVenta } = response.data;
+        this.items = ordenesDeVenta;
+        this.loading = false;
+      });
     },
-    finalizarOrdenDeVenta () {
-      this.botonCargando = true
+    finalizarOrdenDeVenta() {
+      this.botonCargando = true;
       this.$api({
-        method: 'put',
-        url:
-          'ordenes-de-venta/finalizar-orden-de-venta/' + this.idOrden,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "put",
+        url: "ordenes-de-venta/finalizar-orden-de-venta/" + this.idOrden,
+        headers: { Authorization: "Bearer " + localStorage.token },
       })
         .then((response) => {
-          this.respuestaServidor = response.data.mensaje
+          this.errores = [];
+          this.respuestaServidor = response.data.mensaje;
+        })
+        .catch((error) => {
+          this.errores = error.response.data.message;
         })
         .finally(() => {
-          this.botonCargando = false
-          this.cerrarVentanaConfirmacion()
-          this.alerta = true
-          this.recargarTabla()
-        })
+          this.botonCargando = false;
+          this.cerrarVentanaConfirmacion();
+          this.activarNotificacion();
+        });
     },
-    recargarTabla () {
-      this.items = []
-      this.loading = true
-      this.busqueda = null
-      this.obtenerOrdenesDeVenta()
-    }
-  }
-}
+    activarNotificacion() {
+      if (Object.keys(this.errores).length > 0) {
+        const mensaje = this.errores;
+        this.$toast.error(mensaje);
+      } else {
+        this.$toast.success(this.respuestaServidor);
+        this.recargarTabla();
+      }
+    },
+    recargarTabla() {
+      this.items = [];
+      this.loading = true;
+      this.busqueda = null;
+      this.obtenerOrdenesDeVenta();
+    },
+  },
+};
 </script>

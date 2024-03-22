@@ -1,5 +1,20 @@
 <template>
   <v-card class="elevation-10">
+    <v-card-subtitle v-if="alerta">
+      <v-alert
+        outlined
+        prominent
+        type="error"
+        elevation="2"
+        text
+        class="mb-2"
+        dismissible
+        border="bottom"
+      >
+        El precio y/o la cantidad asignada a cada suministro seleccionado no
+        puede ser igual a cero.
+      </v-alert>
+    </v-card-subtitle>
     <v-card-subtitle>
       <v-row>
         <v-spacer />
@@ -17,17 +32,6 @@
       </v-row>
     </v-card-subtitle>
     <v-card-text>
-      <v-alert
-        v-if="error"
-        outlined
-        prominent
-        text
-        type="error"
-        border="bottom"
-        dismissible
-      >
-        {{ mensajeError }}
-      </v-alert>
       <v-data-table
         :headers="headers"
         v-model="suministrosSeleccionados"
@@ -49,7 +53,11 @@
             color="blue darken-4"
             suffix="Bs"
             @input="calcularSubtotal(item)"
-            :disabled="suministrosSeleccionados.some(objeto => objeto.id_suministro === item.id_suministro) === false"
+            :disabled="
+              suministrosSeleccionados.some(
+                (objeto) => objeto.id_suministro === item.id_suministro
+              ) === false
+            "
           />
         </template>
         <template v-slot:[`item.cantidad_prevista_suministro`]="{ item }">
@@ -62,13 +70,20 @@
             min="1"
             color="blue darken-4"
             @input="calcularSubtotal(item)"
-            :disabled="suministrosSeleccionados.some(objeto => objeto.id_suministro === item.id_suministro) === false"
+            :disabled="
+              suministrosSeleccionados.some(
+                (objeto) => objeto.id_suministro === item.id_suministro
+              ) === false
+            "
           />
         </template>
         <template v-slot:[`item.subtotal`]="{ item }">
           <p v-if="item.cantidad_prevista_suministro">
             {{
-              (item.precio_unitario_suministro * item.cantidad_prevista_suministro).toFixed(2)
+              (
+                item.precio_unitario_suministro *
+                item.cantidad_prevista_suministro
+              ).toFixed(2)
             }}
             Bs
           </p>
@@ -83,14 +98,14 @@
 }
 </style>
 <script>
-import suministrosAsignados from '@/commons/tableHeaders/suministrosAsignados'
+import suministrosAsignados from "@/commons/tableHeaders/suministrosAsignados";
 
 export default {
-  name: 'SeleccionarSuministros',
+  name: "SeleccionarSuministros",
   props: {
-    limpiarDatos: Boolean
+    limpiarDatos: Boolean,
   },
-  data () {
+  data() {
     return {
       headers: suministrosAsignados,
       loading: true,
@@ -105,80 +120,95 @@ export default {
       suministrosAux: [],
       error: false,
       mensajeError: null,
-      cambiarSuministros: false
-    }
+      cambiarSuministros: false,
+      alerta: false,
+    };
   },
-  created () {
-    this.obtenerSuministrosEnGeneral()
+  created() {
+    this.obtenerSuministrosEnGeneral();
   },
   watch: {
     suministrosSeleccionados: {
-      handler: function (nuevoValor, valorAnterior) {
-        const validacion = nuevoValor.every(objeto => {
-          return 'cantidad_prevista_suministro' in objeto && objeto.cantidad_prevista_suministro !== '' && objeto.cantidad_prevista_suministro > 0 && objeto.cantidad_prevista_suministro !== null
-        })
+      handler: function (nuevoValor) {
+        const validacion = nuevoValor.every((objeto) => {
+          return (
+            objeto.cantidad_prevista_suministro !== "0" &&
+            objeto.precio_unitario_suministro !== "0"
+          );
+        });
         if (!validacion) {
-          this.mensajeError = 'Debe asignar una cantidad a todos los suministros seleccionados.'
-          this.error = true
-          this.cambiarSuministros = true
+          this.alerta = true;
+          this.cambiarSuministros = true;
         } else {
-          this.cambiarSuministros = false
-          this.error = false
-          this.calcularTotal()
+          this.alerta = false;
+          this.cambiarSuministros = false;
+          this.calcularTotal();
         }
       },
-      deep: true
+      deep: true,
     },
-    limpiarDatos (nuevoValor, valorAnterior) {
+    limpiarDatos(nuevoValor) {
       if (nuevoValor) {
-        this.suministrosSeleccionados = []
-        this.obtenerSuministros()
-        this.$emit('reiniciar-variable')
+        this.suministrosSeleccionados = [];
+        this.obtenerSuministros();
+        this.$emit("reiniciar-variable");
       }
-    }
+    },
   },
   methods: {
-    verificarSeleccion (seleccionado) {
+    verificarSeleccion(seleccionado) {
       if (!seleccionado.value) {
-        const suministro = seleccionado.item
-        const index = this.suministrosSeleccionados.findIndex(objeto => objeto.id_suministro === suministro.id_suministro)
+        const suministro = seleccionado.item;
+        const index = this.suministrosSeleccionados.findIndex(
+          (objeto) => objeto.id_suministro === suministro.id_suministro
+        );
         if (index !== -1) {
-          const suministroEncontrado = this.suministrosSeleccionados[index]
-          delete suministroEncontrado.cantidad_prevista_suministro
-          delete suministroEncontrado.subtotal
-          delete this.subtotales[suministroEncontrado.id_suministro]
+          const suministroEncontrado = this.suministrosSeleccionados[index];
+          delete suministroEncontrado.cantidad_prevista_suministro;
+          delete suministroEncontrado.subtotal;
+          delete this.subtotales[suministroEncontrado.id_suministro];
         }
       }
     },
-    obtenerSuministrosEnGeneral () {
+    obtenerSuministrosEnGeneral() {
       this.$api({
-        method: 'get',
-        url: 'suministros/obtener-suministros-asignados/' + this.$route.params.idOrden,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "get",
+        url:
+          "suministros/obtener-suministros-asignados/" +
+          this.$route.params.idOrden,
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        const { suministrosAsignados } = response.data
-        this.suministrosSeleccionados = suministrosAsignados
-        this.suministros = suministrosAsignados
+        const { suministrosAsignados } = response.data;
+        this.suministrosSeleccionados = suministrosAsignados;
+        this.suministros = suministrosAsignados;
         this.suministrosSeleccionados.forEach((suministro) => {
-          this.subtotales[suministro.id_suministro] = suministro.cantidad_prevista_suministro * suministro.precio_unitario_suministro
-        })
-        this.loading = false
-      })
+          this.subtotales[suministro.id_suministro] =
+            suministro.cantidad_prevista_suministro *
+            suministro.precio_unitario_suministro;
+        });
+        this.loading = false;
+      });
     },
-    calcularSubtotal (item) {
-      const id = item.id_suministro
+    calcularSubtotal(item) {
+      const id = item.id_suministro;
       if (item.cantidad_prevista_suministro) {
-        item.subtotal = item.cantidad_prevista_suministro * item.precio_unitario_suministro
-        this.subtotales[id] = item.subtotal
+        item.subtotal =
+          item.cantidad_prevista_suministro * item.precio_unitario_suministro;
+        this.subtotales[id] = item.subtotal;
       }
       if (!item.cantidad_prevista_suministro) {
-        delete this.subtotales[id]
+        delete this.subtotales[id];
       }
     },
-    calcularTotal () {
-      const total = Object.values(this.subtotales).reduce((a, b) => a + b, 0)
-      this.$emit('establecer-suministros', this.suministrosSeleccionados, total.toFixed(2), 'Suministros asignados')
-    }
-  }
-}
+    calcularTotal() {
+      const total = Object.values(this.subtotales).reduce((a, b) => a + b, 0);
+      this.$emit(
+        "establecer-suministros",
+        this.suministrosSeleccionados,
+        total.toFixed(2),
+        "Suministros asignados"
+      );
+    },
+  },
+};
 </script>
