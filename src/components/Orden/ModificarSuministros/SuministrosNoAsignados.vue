@@ -11,8 +11,8 @@
         dismissible
         border="bottom"
       >
-        El precio y/o la cantidad asignada a cada suministro seleccionado no
-        puede ser igual a cero.
+        3119 El precio y/o la cantidad asignada a cada suministro seleccionado
+        no puede ser igual a cero.
       </v-alert>
     </v-card-subtitle>
     <v-card-subtitle>

@@ -30,56 +30,45 @@ function createWindow() {
   }
 
   // Escucha el evento 'print-content' desde la vista
-  ipcMain.on("print-content", (event, printContent) => {
+  ipcMain.on("imprimir-contenido", (event, contenido) => {
     const options = {
       printerName: "POS-58", // Especifica el nombre de la impresora,
       silent: true,
       preview: true,
       pageSize: {
         width: 58000,
-        height: 793700,
+        height: 210000,
       },
       dpi: { horizontal: 203, vertical: 203 },
       scaleFactor: 100,
       margins: {
         marginType: "custom",
         top: 0,
-        bottom: 10,
-        left: 15,
-        right: 20,
+        bottom: 0,
+        left: 0,
+        right: 0,
       },
     };
     const printWindow = new BrowserWindow({
       width: 219,
       height: 964,
-      show: true,
+      show: false,
     });
 
     // Carga el contenido HTML en la ventana de impresión
-    printWindow.loadURL(`data:text/html,${encodeURIComponent(printContent)}`);
-
-    printWindow.webContents.on("did-finish-load", () => {
-      // Una vez que se carga el contenido, imprímelo sin mostrar el diálogo de impresión
-      printWindow.webContents.print(options);
-    });
+    printWindow
+      .loadURL(`data:text/html,${encodeURIComponent(contenido)}`)
+      .then(() => {
+        printWindow.webContents.on("did-finish-load", () => {
+          // Una vez que se carga el contenido, imprímelo sin mostrar el diálogo de impresión
+          printWindow.webContents.print(options);
+        });
+      })
+      .catch((error) => {
+        // Maneja cualquier error que pueda ocurrir durante la carga de la URL
+        console.error("Error al cargar la URL:", error);
+      });
   });
-
-  // ESTE MODELO DE IMPRESION FUNCIONA CON LA LIBRERIA POSPRINTER, NO TOCAR ESTE CODIGO QUE ES EL FUNCIONAL.
-  /* ipcMain.on('print-content', (event, printContent) => {
-    const data = printContent
-    const options = {
-      printerName: 'POS-58', // Especifica el nombre de la impresora,
-      silent: false,
-      preview: true,
-      pageSize: '58mm',
-      // dpi: { horizontal: 203, vertical: 203 }, // DPI funcional segun impresora,
-      dpi: { horizontal: 180, vertical: 130 }, // DPI funcional,
-      scaleFactor: 100
-    }
-    PosPrinter.print(data, options).catch((error) => {
-      console.error(error)
-    })
-  }) */
 }
 
 app.whenReady().then(() => {

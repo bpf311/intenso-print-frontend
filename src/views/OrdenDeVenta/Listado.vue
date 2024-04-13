@@ -162,12 +162,12 @@
                         v-bind="attrs"
                         v-on="on"
                         :to="{
-                          name: 'Datos de orden de servicio',
+                          name: 'Datos de orden de venta',
                           params: {
                             idOrden: row.item['id_orden'],
-                            idOrdenDeTrabajo: row.item['id_orden_de_venta'],
+                            idOrdenDeVenta: row.item['id_orden_de_venta'],
                             tipoCliente: row.item['id_tipo_de_cliente'],
-                            vistaAnterior: 'Listado de ordenes de servicio',
+                            vistaAnterior: 'Listado de ordenes de venta',
                           },
                         }"
                       >
@@ -232,7 +232,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-dialog v-model="ventanaConfirmacion" width="500">
+    <v-dialog v-model="ventanaConfirmacion" width="500" persistent>
       <v-card>
         <v-card-title class="text-h5 grey lighten-2">
           Confirmar acción
@@ -280,7 +280,6 @@ export default {
     items: [],
     botonCargando: false,
     respuestaServidor: null,
-    alerta: false,
     loading: true,
     loadingSelect: true,
     seleccionEstado: 0,

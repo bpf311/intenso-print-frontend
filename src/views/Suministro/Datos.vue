@@ -35,93 +35,113 @@
               </v-row>
             </v-container>
           </v-card-title>
-          <v-card-text>
-            <v-container v-if="!overlay">
-              <v-list>
-                <v-list-item>
-                  <v-row>
-                    <v-col cols="12" md="4" class="text-start text-md-end">
-                      <v-list-item-content>
-                        <v-list-item-title class="font-weight-black">Tipo: </v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                    <v-col cols="12" md="8" class="text-center">
-                      <v-list-item-content>
-                        <v-list-item-title>{{ suministro.tipo_de_suministro.tipo_suministro }}</v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                  </v-row>
-                </v-list-item>
+          <v-card-text v-if="!overlay">
+            <v-list>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="12" md="4" class="text-start text-md-end">
+                    <v-list-item-content>
+                      <v-list-item-title class="font-weight-black text-wrap"
+                        >Tipo:
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="12" md="8" class="text-center">
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        suministro.tipo_de_suministro.tipo_suministro
+                      }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                </v-row>
+              </v-list-item>
 
-                <v-divider></v-divider>
+              <v-divider></v-divider>
 
-                <v-list-item>
-                  <v-row>
-                    <v-col cols="12" md="4" class="text-start text-md-end">
-                      <v-list-item-content>
-                        <v-list-item-title class="font-weight-black">Descripcion: </v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                    <v-col cols="12" md="8" class="text-center">
-                      <v-list-item-content>
-                        <v-list-item-title>{{ suministro.descripcion_suministro }}</v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                  </v-row>
-                </v-list-item>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="12" md="4" class="text-start text-md-end">
+                    <v-list-item-content>
+                      <v-list-item-title class="font-weight-black text-wrap"
+                        >Descripción:
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="12" md="8" class="text-center">
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        suministro.descripcion_suministro
+                      }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                </v-row>
+              </v-list-item>
 
-                <v-divider></v-divider>
+              <v-divider></v-divider>
 
-                <v-list-item>
-                  <v-row>
-                    <v-col cols="12" md="4" class="text-start text-md-end">
-                      <v-list-item-content>
-                        <v-list-item-title class="font-weight-black">Codigo: </v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                    <v-col cols="12" md="8" class="text-center">
-                      <v-list-item-content>
-                        <v-list-item-title>{{ suministro.codigo_suministro }}</v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                  </v-row>
-                </v-list-item>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="12" md="4" class="text-start text-md-end">
+                    <v-list-item-content>
+                      <v-list-item-title class="font-weight-black text-wrap"
+                        >Código:
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="12" md="8" class="text-center">
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        suministro.codigo_suministro
+                      }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                </v-row>
+              </v-list-item>
 
-                <v-divider></v-divider>
+              <v-divider></v-divider>
 
-                <v-list-item>
-                  <v-row>
-                    <v-col cols="12" md="4">
-                      <v-list-item-content class="text-start text-md-end">
-                        <v-list-item-title class="font-weight-black">Unidad de medida: </v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                    <v-col cols="12" md="8" class="text-center">
-                      <v-list-item-content>
-                        <v-list-item-title>{{ suministro.unidad_de_medida.unidad_de_medida }}</v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                  </v-row>
-                </v-list-item>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="12" md="4">
+                    <v-list-item-content class="text-start text-md-end">
+                      <v-list-item-title class="font-weight-black text-wrap"
+                        >Unidad de medida:
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="12" md="8" class="text-center">
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        suministro.unidad_de_medida.unidad_de_medida
+                      }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                </v-row>
+              </v-list-item>
 
-                <v-divider></v-divider>
+              <v-divider></v-divider>
 
-                <v-list-item>
-                  <v-row>
-                    <v-col cols="12" md="4" class="text-start text-md-end">
-                      <v-list-item-content>
-                        <v-list-item-title class="font-weight-black">Stock actual: </v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                    <v-col cols="12" md="8" class="text-center">
-                      <v-list-item-content>
-                        <v-list-item-title>{{ suministro.saldo_suministro + " " + suministro.unidad_de_medida.unidad_de_medida }}</v-list-item-title>
-                      </v-list-item-content>
-                    </v-col>
-                  </v-row>
-                </v-list-item>
-              </v-list>
-            </v-container>
+              <v-list-item>
+                <v-row>
+                  <v-col cols="12" md="4" class="text-start text-md-end">
+                    <v-list-item-content>
+                      <v-list-item-title class="font-weight-black text-wrap"
+                        >Stock actual:
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                  <v-col cols="12" md="8" class="text-center">
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        suministro.saldo_suministro +
+                        " " +
+                        suministro.unidad_de_medida.unidad_de_medida
+                      }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-col>
+                </v-row>
+              </v-list-item>
+            </v-list>
           </v-card-text>
         </v-card>
       </v-col>
@@ -136,33 +156,44 @@
               </v-row>
             </v-container>
           </v-card-title>
-          <v-card-text v-if="suministro.caracteristicas && !suministro.caracteristicas.length > 0">
+          <v-card-text
+            v-if="
+              suministro.caracteristicas &&
+              !suministro.caracteristicas.length > 0
+            "
+          >
             <h3 class="text-center">Sin caracteristicas registradas</h3>
           </v-card-text>
           <v-card-text v-else>
-            <v-container>
-              <v-list>
-                <div v-for="(elemento, index) in suministro.caracteristicas"
-                :key="index">
-                  <v-list-item
-                    >
-                    <v-row>
-                      <v-col cols="12" md="4" class="text-start text-md-end">
-                        <v-list-item-content>
-                          <v-list-item-title class="font-weight-black">{{ elemento.caracteristica + ":" }}</v-list-item-title>
-                        </v-list-item-content>
-                      </v-col>
-                      <v-col cols="12" md="8" class="text-center">
-                        <v-list-item-content>
-                          <v-list-item-title>{{ elemento.pivot.valor_caracteristica }}</v-list-item-title>
-                        </v-list-item-content>
-                      </v-col>
-                    </v-row>
-                  </v-list-item>
-                  <v-divider></v-divider>
-                </div>
-              </v-list>
-            </v-container>
+            <v-list>
+              <div
+                v-for="(elemento, index) in suministro.caracteristicas"
+                :key="index"
+              >
+                <v-list-item>
+                  <v-row>
+                    <v-col cols="12" md="4" class="text-start text-md-end">
+                      <v-list-item-content>
+                        <v-list-item-title
+                          class="font-weight-black text-wrap"
+                          >{{
+                            elemento.caracteristica + ":"
+                          }}</v-list-item-title
+                        >
+                      </v-list-item-content>
+                    </v-col>
+                    <v-col cols="12" md="8" class="text-center">
+                      <v-list-item-content>
+                        <v-list-item-title>{{
+                          elemento.pivot.valor_caracteristica
+                        }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-col>
+                  </v-row>
+                </v-list-item>
+                <v-divider></v-divider>
+              </div>
+            </v-list>
           </v-card-text>
         </v-card>
       </v-col>
@@ -209,35 +240,40 @@
     </v-overlay>
   </v-container>
 </template>
+<style scoped>
+.text-wrap {
+  white-space: normal !important;
+}
+</style>
 <script>
-import ingresos from '../../components/Suministro/Ingreso/Listado.vue'
-import egresos from '../../components/Suministro/Egreso/Listado.vue'
+import ingresos from "../../components/Suministro/Ingreso/Listado.vue";
+import egresos from "../../components/Suministro/Egreso/Listado.vue";
 export default {
-  name: 'DatosSuministro',
+  name: "DatosSuministro",
   components: {
     ingresos,
-    egresos
+    egresos,
   },
   data: () => ({
     overlay: true,
     loadingSelect: true,
     suministro: [],
-    tab: null
+    tab: null,
   }),
-  created () {
-    this.obtenerSuministro()
+  created() {
+    this.obtenerSuministro();
   },
   methods: {
-    obtenerSuministro () {
+    obtenerSuministro() {
       this.$api({
-        method: 'get',
-        url: 'suministros/obtener-datos-suministro/' + this.$route.params.id,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "get",
+        url: "suministros/obtener-datos-suministro/" + this.$route.params.id,
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        this.suministro = response.data.suministro
-        this.overlay = false
-      })
-    }
-  }
-}
+        this.suministro = response.data.suministro;
+        this.overlay = false;
+      });
+    },
+  },
+};
 </script>

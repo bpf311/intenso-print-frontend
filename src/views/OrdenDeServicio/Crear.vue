@@ -1,20 +1,20 @@
 <template>
   <v-container>
-    <v-row v-if="ordenDeVenta.orden">
+    <v-row>
       <v-col cols="12">
         <v-card class="elevation-10">
           <v-card-title>
             <v-row>
               <v-col cols="12" md="10">
                 <h3 style="word-break: normal" class="text-center text-md-left">
-                  Editar datos de la orden de venta
+                  Registrar nueva orden de servicio
                 </h3>
               </v-col>
               <v-col cols="12" md="2" class="text-center text-md-end">
                 <v-btn
                   block
                   color="error"
-                  :to="{ name: 'Listado de ordenes de venta' }"
+                  :to="{ name: 'Listado de ordenes de servicio' }"
                 >
                   <v-icon left>mdi-arrow-left</v-icon>
                   Atras
@@ -47,31 +47,30 @@
                         v-slot="{ errors }"
                       >
                         <v-select
-                          v-model="
-                            ordenDeVenta.orden.cliente.id_tipo_de_cliente
-                          "
+                          v-model="tipoDeClienteSeleccionado"
                           label="Tipo de cliente"
                           outlined
                           prepend-icon="mdi-briefcase-account"
                           :items="tiposDeCliente"
                           item-text="tipo_cliente"
                           item-value="id_tipo_de_cliente"
+                          :loading="elementosCargando.selectTiposDeCliente"
                           color="blue darken-4"
-                          @change="obtenerClientes()"
+                          @change="obtenerClientes(true)"
                           :error-messages="
                             obtenerValidaciones(errors, 'id_tipo_de_cliente')
                           "
                         />
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="8">
+                    <v-col cols="12" md="6">
                       <ValidationProvider
                         name="Cliente"
                         rules="required_if:Tipo de cliente"
                         v-slot="{ errors }"
                       >
                         <v-autocomplete
-                          v-model="ordenDeVenta.orden.cliente.id_cliente"
+                          v-model="clienteSeleccionado"
                           :items="clientes"
                           item-text="datos_unidos"
                           item-value="id_cliente"
@@ -89,6 +88,38 @@
                         />
                       </ValidationProvider>
                     </v-col>
+                    <v-col cols="12" md="2">
+                      <v-btn
+                        color="green"
+                        block
+                        class="white--text"
+                        @click="ventanaRegistroCliente = true"
+                      >
+                        Nuevo cliente
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12">
+                      <ValidationProvider
+                        name="Tipo de servicio"
+                        rules="required"
+                        v-slot="{ errors }"
+                      >
+                        <v-select
+                          v-model="ordenDeServicio.tipoDeServicio"
+                          label="Tipo de servicio"
+                          outlined
+                          prepend-icon="mdi-briefcase-account"
+                          :items="tiposDeServicio"
+                          item-text="tipo_de_servicio"
+                          item-value="id_tipo_de_servicio"
+                          :loading="elementosCargando.selectTiposDeCliente"
+                          color="blue darken-4"
+                          :error-messages="
+                            obtenerValidaciones(errors, 'id_tipo_de_cliente')
+                          "
+                        />
+                      </ValidationProvider>
+                    </v-col>
                     <v-col cols="12">
                       <ValidationProvider
                         name="Descripción"
@@ -96,8 +127,8 @@
                         v-slot="{ errors }"
                       >
                         <v-textarea
-                          v-model="ordenDeVenta.observaciones_orden_de_venta"
-                          label="Descripcion de la orden de venta"
+                          v-model="ordenDeServicio.detalles"
+                          label="Descripción del pedido"
                           outlined
                           prepend-icon="mdi-clipboard-list"
                           color="blue darken-4"
@@ -120,83 +151,26 @@
                   <v-container class="elevation-4">
                     <v-row>
                       <v-col cols="12">
-                        <h4 class="text-center">Suministros</h4>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-title>
-                <v-card-text>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-tabs v-model="tab" grow class="elevation-4 mb-3">
-                        <v-tab href="#tab-1">
-                          <v-icon>mdi-package-down</v-icon>
-                          Suministros asignados
-                        </v-tab>
-                        <v-tab href="#tab-2">
-                          <v-icon>mdi-package-up</v-icon>
-                          Suministros no asignados
-                        </v-tab>
-                      </v-tabs>
-                      <v-card-subtitle v-if="alerta">
-                        <v-alert
-                          outlined
-                          prominent
-                          type="error"
-                          elevation="2"
-                          text
-                          class="mb-2"
-                          dismissible
-                          border="bottom"
-                        >
-                          Es obligatorio seleccionar al menos un suministro y
-                          asignarle una cantidad válida.
-                        </v-alert>
-                      </v-card-subtitle>
-                      <v-tabs-items v-model="tab">
-                        <v-tab-item value="tab-1">
-                          <suministros-asignados
-                            @establecer-suministros="establecerSuministros"
-                          />
-                        </v-tab-item>
-                        <v-tab-item value="tab-2">
-                          <suministros-no-asignados
-                            @establecer-suministros="establecerSuministros"
-                          />
-                        </v-tab-item>
-                      </v-tabs-items>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </v-col>
-            <v-col cols="12">
-              <v-card class="elevation-10">
-                <v-card-title>
-                  <v-container class="elevation-4">
-                    <v-row>
-                      <v-col cols="12">
                         <h4 class="text-center">Confirmar precio</h4>
                       </v-col>
                     </v-row>
                   </v-container>
                 </v-card-title>
-                <v-card-text>
-                  <v-row>
+                <v-card-text class="mt-5">
+                  <v-row class="d-flex justify-space-around">
                     <v-col cols="12" md="4">
                       <ValidationProvider
                         name="Total"
-                        rules="required"
+                        rules="required|min_value:1"
                         v-slot="{ errors }"
                       >
                         <v-text-field
-                          v-model="ordenDeVenta.orden.precio_total"
+                          v-model="ordenDeServicio.precioTotal"
                           label="Precio total"
                           outlined
                           prepend-icon="mdi-cash-multiple"
                           color="blue darken-4"
                           suffix="Bs"
-                          disabled
                           :error-messages="obtenerValidaciones(errors, 'total')"
                         />
                       </ValidationProvider>
@@ -206,12 +180,12 @@
                         name="Monto cancelado"
                         :rules="
                           'required|double:2|min_value:0|max_value:' +
-                          ordenDeVenta.orden.precio_total
+                          ordenDeServicio.precioTotal
                         "
                         v-slot="{ errors }"
                       >
                         <v-text-field
-                          v-model="ordenDeVenta.orden.monto_cancelado"
+                          v-model="ordenDeServicio.montoCancelado"
                           label="Monto cancelado"
                           outlined
                           prepend-icon="mdi-account-cash"
@@ -243,7 +217,7 @@
                     class="white--text"
                     @click="enviarFormulario"
                   >
-                    Modificar
+                    Registrar
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -252,70 +226,67 @@
         </ValidationObserver>
       </v-col>
     </v-row>
-    <v-overlay :value="overlay" absolute dark opacity="0.8" color="#212121">
-      <v-progress-circular indeterminate :size="90" :width="8">
-        Cargando
-      </v-progress-circular>
-    </v-overlay>
+    <v-dialog v-model="ventanaRegistroCliente" width="1000" persistent>
+      <RegistrarNuevoCliente
+        @cerrar-ventana="ventanaRegistroCliente = false"
+        @establecer-nuevo-cliente="establecerNuevoCliente"
+      />
+    </v-dialog>
   </v-container>
 </template>
-
+<style>
+.my-text-field .v-text-field__details {
+  display: none;
+}
+</style>
 <script>
-import SuministrosAsignados from "@/components/Orden/ModificarSuministros/SuministrosAsignados.vue";
-import SuministrosNoAsignados from "@/components/Orden/ModificarSuministros/SuministrosNoAsignados.vue";
+import RegistrarNuevoCliente from "@/components/Orden/RegistrarNuevoCliente/RegistrarNuevoCliente.vue";
 import { impresionService } from "@/services/impresion";
 
 export default {
-  name: "ModificarOrdenDeVenta",
+  name: "CrearOrdenDeVenta",
   components: {
-    SuministrosAsignados,
-    SuministrosNoAsignados,
+    RegistrarNuevoCliente,
   },
   data: () => ({
+    elementosCargando: {
+      selectTiposDeCliente: false,
+      selectTiposDeServicio: false,
+    },
     imprimir: true,
-    tab: null,
-    overlay: true,
-    loading: false,
-    inactivo: true,
-    botonCargando: false,
-    respuestaServidor: null,
-    alerta: false,
-    clientes: [],
-    errores: [],
-    clienteSeleccionado: null,
-    ordenDeVenta: [],
-    suministros: [],
-    tiposDeCliente: [],
-    tipoDeClienteSeleccionado: null,
-    suministrosAsignados: [],
-    nuevosSuministros: [],
-    subtotalAsignados: 0,
-    subtotalNuevos: 0,
-    validacionServidor: false,
     datosImpresion: {
       datosRecibo: null,
       suministros: null,
     },
+    loading: false,
+    inactivo: true,
+    botonCargando: false,
+    respuestaServidor: null,
+    validacionServidor: false,
+    alerta: false,
+    clientes: [],
+    errores: [],
+    clienteSeleccionado: null,
+    ordenDeServicio: {
+      tipoDeServicio: null,
+      detalles: null,
+      precioTotal: null,
+      montoCancelado: null,
+    },
+    tiposDeCliente: [],
+    tipoDeClienteSeleccionado: null,
+    ventanaRegistroCliente: false,
+    mensajeError: null,
+    tiposDeServicio: [],
   }),
   created() {
-    this.obtenerDatosOrdenDeVenta();
     this.obtenerTiposDeCliente();
-  },
-  watch: {
-    suministros: {
-      handler: function (nuevoValor) {
-        if (nuevoValor.length > 0) {
-          this.alerta = false;
-        }
-      },
-      deep: true,
-    },
+    this.obtenerTiposDeServicios();
   },
   methods: {
     enviarFormulario() {
       this.$refs.obs.validate().then((valid) => {
         if (!valid) {
-          this.alerta = this.suministros.length === 0;
           const errorField = document.querySelector(".error--text");
           if (errorField) {
             errorField.scrollIntoView(false, {
@@ -325,7 +296,7 @@ export default {
             });
           }
         } else {
-          this.modificarOrdenDeVenta();
+          this.registrarOrdenDeServicio();
         }
       });
     },
@@ -336,16 +307,27 @@ export default {
         headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
         this.tiposDeCliente = response.data.tiposDeCliente;
-        this.loadingSelect = false;
+        this.elementosCargando.selectTiposDeCliente = false;
       });
     },
-    obtenerClientes() {
-      this.loading = true;
-      this.inactivo = true;
+    obtenerTiposDeServicios() {
+      this.$api({
+        method: "get",
+        url: "tipos-de-servicios/obtener-tipos-de-servicio",
+        headers: { Authorization: "Bearer " + localStorage.token },
+      }).then((response) => {
+        this.tiposDeServicio = response.data.tiposDeServicio;
+        this.elementosCargando.selectTiposDeServicio = false;
+      });
+    },
+    obtenerClientes(cambio) {
+      if (cambio) {
+        this.clienteSeleccionado = null;
+        this.loading = true;
+        this.inactivo = true;
+      }
       const tipoCliente =
-        this.ordenDeVenta.orden.cliente.id_tipo_de_cliente === 1
-          ? "empresariales"
-          : "personales";
+        this.tipoDeClienteSeleccionado === 1 ? "empresariales" : "personales";
       this.$api({
         method: "get",
         url: "clientes/obtener-clientes-" + tipoCliente,
@@ -356,32 +338,14 @@ export default {
         this.inactivo = false;
       });
     },
-    obtenerDatosOrdenDeVenta() {
-      this.$api({
-        method: "get",
-        url:
-          "ordenes-de-venta/editar-orden-de-venta/" +
-          this.$route.params.idOrdenDeVenta +
-          "/" +
-          this.$route.params.tipoCliente,
-        headers: { Authorization: "Bearer " + localStorage.token },
-      }).then((response) => {
-        this.ordenDeVenta = response.data.ordenDeVenta[0];
-        this.suministros = response.data.suministros;
-        this.obtenerClientes();
-        this.overlay = false;
-      });
-    },
-    modificarOrdenDeVenta() {
-      this.botonCargando = true;
+    registrarOrdenDeServicio() {
       const imprimir = this.imprimir ? "1" : "0";
+      this.mensajeError = null;
+      this.alerta = false;
+      this.botonCargando = true;
       this.$api({
-        method: "put",
-        url:
-          "ordenes-de-venta/modificar-orden-de-venta/" +
-          this.$route.params.idOrden +
-          "/" +
-          imprimir,
+        method: "post",
+        url: "ordenes-de-servicio/registrar-orden-de-servicio/" + imprimir,
         headers: { Authorization: "Bearer " + localStorage.token },
         data: this.generarDatos(),
       })
@@ -393,6 +357,7 @@ export default {
             this.datosImpresion.suministros = response.data.suministros;
             this.imprimirRecibo();
           }
+          this.reiniciarDatos(this.ordenDeVenta);
           this.$store.commit("recargarDatos");
         })
         .catch((error) => {
@@ -405,60 +370,32 @@ export default {
         });
     },
     generarDatos() {
-      const datos = {
-        id_cliente: this.ordenDeVenta.orden.cliente.id_cliente,
-        id_tipo_de_orden: 3,
-        precio_total: this.ordenDeVenta.orden.precio_total,
-        monto_cancelado: this.ordenDeVenta.orden.monto_cancelado,
-        observaciones_orden_de_venta:
-          this.ordenDeVenta.observaciones_orden_de_venta,
-        suministros: [],
-        cantidades: [],
-        precios: [],
+      return {
+        id_cliente: this.clienteSeleccionado,
+        id_tipo_de_servicio: this.ordenDeServicio.tipoDeServicio,
+        id_tipo_de_orden: 2,
+        precio_total: this.ordenDeServicio.precioTotal,
+        monto_cancelado: this.ordenDeServicio.montoCancelado,
+        detalles_orden_de_servicio: this.ordenDeServicio.detalles,
       };
-
-      this.suministros.forEach(function (item) {
-        datos.suministros.push(item.id_suministro);
-        datos.cantidades.push(parseInt(item.cantidad_prevista_suministro));
-        datos.precios.push(item.precio_unitario_suministro);
-      });
-
-      return datos;
     },
-    establecerSuministros(suministros, subtotal, componente) {
-      subtotal = parseFloat(subtotal);
-      if (componente === "Suministros asignados") {
-        this.suministrosAsignados = suministros;
-        this.subtotalAsignados = subtotal;
+    reiniciarDatos(obj) {
+      for (const key in obj) {
+        if (typeof obj[key] === "object" && obj[key] !== null) {
+          this.reiniciarDatos(obj[key]);
+        } else {
+          obj[key] = null;
+        }
       }
-      if (componente === "Nuevos suministros") {
-        this.nuevosSuministros = suministros;
-        this.subtotalNuevos = subtotal;
-      }
-
-      this.ordenDeVenta.orden.precio_total =
-        this.subtotalNuevos + this.subtotalAsignados;
-
-      if (
-        this.ordenDeVenta.orden.precio_total === 0 ||
-        this.ordenDeVenta.orden.precio_total === 0.0
-      ) {
-        this.ordenDeVenta.orden.precio_total = null;
-      }
-
-      if (
-        suministros.length > 0 &&
-        suministros.every(
-          (suministro) => suministro.cantidad_prevista_suministro > 0
-        )
-      ) {
-        this.suministros = [
-          ...this.suministrosAsignados,
-          ...this.nuevosSuministros,
-        ];
-      } else {
-        this.suministros = [];
-      }
+      this.clienteSeleccionado = null;
+      this.tipoDeClienteSeleccionado = null;
+    },
+    establecerNuevoCliente(cliente) {
+      this.tipoDeClienteSeleccionado = cliente.id_tipo_de_cliente;
+      this.obtenerClientes(false);
+      this.clienteSeleccionado = cliente.id_cliente;
+      this.ventanaRegistroCliente = false;
+      this.$toast.success("Cliente registrado correctamente.");
     },
     activarNotificacion() {
       if (Object.keys(this.errores).length > 0) {
@@ -477,7 +414,7 @@ export default {
       return [...veeErrors, ...serverErrors];
     },
     imprimirRecibo() {
-      impresionService.imprimir(
+      impresionService.imprimirReciboConSuministros(
         this.datosImpresion.datosRecibo,
         this.datosImpresion.suministros
       );

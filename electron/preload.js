@@ -15,15 +15,9 @@ window.addEventListener("DOMContentLoaded", () => {
 // exponer el evento imprimirContenido en el contexto de la ventana
 contextBridge.exposeInMainWorld("ipcRenderer", {
   send: (channel, data) => {
-    const validChannels = ["print-content"]; // <-- Array of all ipcRenderer Channels used in the client
+    const validChannels = ["imprimir-contenido"];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
-    }
-  },
-  receive: (channel, func) => {
-    const validChannels = ["print-content"]; // Array de todos los canales ipcMain utilizados en Electron
-    if (validChannels.includes(channel)) {
-      ipcRenderer.on(channel, (event, ...args) => func(...args));
     }
   },
 });
