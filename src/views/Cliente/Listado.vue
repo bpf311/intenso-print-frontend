@@ -73,7 +73,7 @@
                 firstIcon: 'mdi-arrow-collapse-left',
                 lastIcon: 'mdi-arrow-collapse-right',
                 prevIcon: 'mdi-minus',
-                nextIcon: 'mdi-plus'
+                nextIcon: 'mdi-plus',
               }"
             >
               <template v-slot:item.opciones="row">
@@ -88,12 +88,12 @@
                         dark
                         v-bind="attrs"
                         :to="{
-                    name: 'Editar cliente',
-                    params: {
-                      id: row.item['id_cliente'],
-                      tipoCliente: row.item['id_tipo_de_cliente']
-                    }
-                  }"
+                          name: 'Editar cliente',
+                          params: {
+                            id: row.item['id_cliente'],
+                            tipoCliente: row.item['id_tipo_de_cliente'],
+                          },
+                        }"
                         v-on="on"
                       >
                         <v-icon>mdi-pencil</v-icon>
@@ -111,11 +111,11 @@
                         dark
                         v-bind="attrs"
                         :to="{
-                    name: 'Ordenes de cliente',
-                    params: {
-                      id: row.item['id_cliente'],
-                    }
-                  }"
+                          name: 'Ordenes de cliente',
+                          params: {
+                            id: row.item['id_cliente'],
+                          },
+                        }"
                         v-on="on"
                       >
                         <v-icon>mdi-list-box-outline</v-icon>
@@ -134,12 +134,12 @@
 </template>
 
 <script>
-import clienteEmpresarialHeaders from '../../commons/tableHeaders/clienteEmpresarial'
-import clientePersonalHeaders from '../../commons/tableHeaders/clientePersonal'
-import { tableMixin } from '@/commons/mixins/tableMixin'
+import clienteEmpresarialHeaders from "../../commons/tableHeaders/clienteEmpresarial";
+import clientePersonalHeaders from "../../commons/tableHeaders/clientePersonal";
+import { tableMixin } from "@/commons/mixins/tableMixin";
 export default {
   mixins: [tableMixin],
-  name: 'ListadoDeClientes',
+  name: "ListadoDeClientes",
   data: () => ({
     loadingSelect: true,
     busqueda: null,
@@ -150,56 +150,53 @@ export default {
     alerta: false,
     loading: true,
     selecciontipoCliente: null,
-    tiposDeCliente: []
+    tiposDeCliente: [],
   }),
-  activated () {
-    if (
-      this.selecciontipoCliente &&
-      this.$store.state.recargar
-    ) {
-      this.recargarTabla()
-      this.$store.commit('noRecargarDatos')
+  activated() {
+    if (this.selecciontipoCliente && this.$store.state.recargar) {
+      this.recargarTabla();
+      this.$store.commit("noRecargarDatos");
     }
   },
-  created () {
-    this.obtenerTiposDeCliente()
+  created() {
+    this.obtenerTiposDeCliente();
   },
   computed: {
-    tienePermiso () {
-      return this.$store.getters.tienePermiso
-    }
+    tienePermiso() {
+      return this.$store.getters.tienePermiso;
+    },
   },
   methods: {
-    obtenerTiposDeCliente () {
+    obtenerTiposDeCliente() {
       this.$api({
-        method: 'get',
-        url: 'clientes/obtener-tipos-cliente',
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "get",
+        url: "clientes/obtener-tipos-cliente",
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        this.tiposDeCliente = response.data.tiposDeCliente
-        this.loadingSelect = false
-      })
+        this.tiposDeCliente = response.data.tiposDeCliente;
+        this.loadingSelect = false;
+      });
     },
-    obtenerClientes () {
+    obtenerClientes() {
       this.$api({
-        method: 'get',
-        url: 'clientes/obtener-clientes/' + this.selecciontipoCliente,
-        headers: { Authorization: 'Bearer ' + localStorage.token }
+        method: "get",
+        url: "clientes/obtener-clientes/" + this.selecciontipoCliente,
+        headers: { Authorization: "Bearer " + localStorage.token },
       }).then((response) => {
-        this.items = response.data.clientes
-        this.loading = false
-      })
+        this.items = response.data.clientes;
+        this.loading = false;
+      });
     },
-    recargarTabla () {
-      this.loading = true
+    recargarTabla() {
+      this.loading = true;
       this.headers =
         this.selecciontipoCliente === 1
           ? this.headerClienteEmpresarial
-          : this.headerClientePersonal
-      this.items = []
-      this.busqueda = null
-      this.obtenerClientes()
-    }
-  }
-}
+          : this.headerClientePersonal;
+      this.items = [];
+      this.busqueda = null;
+      this.obtenerClientes();
+    },
+  },
+};
 </script>
